@@ -1,4 +1,11 @@
 module.exports = {
+  configureWebpack: {
+    resolve: {
+      alias: {
+        '@components': '@/renderer/components'
+      }
+    }
+  },
   pluginOptions: {
     electronBuilder: {
       mainProcessFile: 'src/background/main.ts',
