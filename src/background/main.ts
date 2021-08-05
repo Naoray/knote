@@ -1,10 +1,12 @@
 'use strict'
 
-import { app, protocol, BrowserWindow } from 'electron'
+import { app, protocol, BrowserWindow, Menu, MenuItem } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
 import { join } from 'path'
 const isDevelopment = process.env.NODE_ENV !== 'production'
+
+let win: BrowserWindow
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -13,9 +15,9 @@ protocol.registerSchemesAsPrivileged([
 
 async function createWindow () {
   // Create the browser window.
-  const win = new BrowserWindow({
-    width: 800,
-    height: 600,
+  win = new BrowserWindow({
+    minWidth: 1200,
+    minHeight: 800,
     webPreferences: {
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
@@ -35,6 +37,31 @@ async function createWindow () {
     // Load the index.html when not in development
     win.loadURL('app://./index.html')
   }
+}
+
+function createMenu () {
+  const template = [
+    new MenuItem({ role: 'fileMenu' }),
+    new MenuItem({ role: 'editMenu' }),
+    new MenuItem({ role: 'viewMenu' }),
+    new MenuItem({
+      label: 'Window',
+      submenu: [
+        {
+          label: 'Always Show Menu Bar',
+          type: 'checkbox',
+          checked: true,
+          click: (menuItem: MenuItem): void => {
+            win.setAutoHideMenuBar(!menuItem.checked)
+            win.setMenuBarVisibility(menuItem.checked)
+          }
+        }
+      ]
+    })
+  ]
+
+  const menu = Menu.buildFromTemplate(template)
+  Menu.setApplicationMenu(menu)
 }
 
 // Quit when all windows are closed.
@@ -65,6 +92,7 @@ app.on('ready', async () => {
     }
   }
   createWindow()
+  createMenu()
 })
 
 // Exit cleanly on request from parent process in development mode.
