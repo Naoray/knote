@@ -51,7 +51,7 @@ function createMenu () {
           label: 'Always Show Menu Bar',
           type: 'checkbox',
           checked: true,
-          click: (menuItem: MenuItem): void => {
+          click: (menuItem) => {
             win.setAutoHideMenuBar(!menuItem.checked)
             win.setMenuBarVisibility(menuItem.checked)
           }

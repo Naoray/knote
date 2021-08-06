@@ -3,9 +3,6 @@ module.exports = {
   env: {
     node: true
   },
-  globals: {
-    __static: 'readonly'
-  },
   extends: [
     'plugin:vue/vue3-essential',
     '@vue/standard',
@@ -16,6 +13,8 @@ module.exports = {
   },
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off'
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+    'no-unused-expressions': 'off',
+    '@typescript-eslint/no-unused-expressions': 'error'
   }
 }

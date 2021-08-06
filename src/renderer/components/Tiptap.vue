@@ -1,5 +1,5 @@
 <template>
-  <editor-content :editor="editor" />
+  <EditorContent :editor="editor" />
 </template>
 
 <script lang="ts">
@@ -21,7 +21,7 @@ export default defineComponent({
       editorProps: {
         attributes: {
           class:
-            'prose prose-sm sm:prose lg:prose-lg xl:prose-2xl m-5 focus:outline-none'
+            'max-w-none mx-10 prose prose-sm lg:prose-lg xl:prose-2xl focus:outline-none'
         }
       },
       onUpdate: ({ editor }) => console.log(editor.getHTML()),

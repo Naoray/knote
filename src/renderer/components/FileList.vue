@@ -1,18 +1,18 @@
 <template>
   <ul class="divide-y divide-gray-200">
-    <li v-for="message in messages" :key="message.id" class="relative px-4 py-5 bg-white hover:bg-gray-50 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
+    <li v-for="note in notes" :key="note.id" class="relative px-4 py-5 bg-white hover:bg-gray-50 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
       <div class="flex justify-between space-x-3">
         <div class="flex-1 min-w-0">
           <a href="#" class="block focus:outline-none">
             <span class="absolute inset-0" aria-hidden="true" />
-            <p class="text-sm font-medium text-gray-900 truncate">{{ message.title }}</p>
+            <p class="text-sm font-medium text-gray-900 truncate">{{ note.title }}</p>
           </a>
         </div>
-        <time :datetime="message.datetime" class="flex-shrink-0 text-sm text-gray-500 whitespace-nowrap">{{ message.time }}</time>
+        <time :datetime="note.datetime" class="flex-shrink-0 text-sm text-gray-500 whitespace-nowrap">{{ note.time }}</time>
       </div>
       <div class="mt-1">
         <p class="text-sm text-gray-600 line-clamp-2">
-          {{ message.preview }}
+          {{ note.preview }}
         </p>
       </div>
     </li>
@@ -22,7 +22,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 
-const messages = [
+const notes = [
   {
     id: 1,
     title: 'Some notes',
@@ -92,7 +92,7 @@ const messages = [
 export default defineComponent({
   setup () {
     return {
-      messages
+      notes
     }
   }
 })
