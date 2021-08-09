@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, onMounted, ref, watch, watchEffect } from 'vue'
 
 import { useEditor, EditorContent } from '@tiptap/vue-3'
 import StarterKit from '@tiptap/starter-kit'
@@ -17,7 +17,7 @@ export default defineComponent({
 
   setup () {
     const notes = useNotes()!
-    const noteId = Number(useRoute().params.note)
+    const route = useRoute()
 
     const editor = useEditor({
       extensions: [
@@ -30,8 +30,16 @@ export default defineComponent({
         }
       },
       onUpdate: ({ editor }) => console.log(editor.getHTML()),
-      content: notes.data[noteId].content
+      content: notes.data[Number(route.params.note)].content
     })
+
+    watch(
+      () => route.params.note,
+      noteId => {
+        if (editor.value) {
+          editor.value.commands.setContent(notes.data[Number(noteId)].content)
+        }
+      }, { immediate: true })
 
     return { editor }
   }

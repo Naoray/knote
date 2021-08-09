@@ -8,7 +8,7 @@ const routes: Array<RouteRecordRaw> = [
     redirect: { name: 'NoteEditor', params: { note: 1 } }
   },
   {
-    path: '/:note',
+    path: '/notes/:note',
     name: 'NoteEditor',
     component: Home
   }
