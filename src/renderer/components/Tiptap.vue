@@ -19,6 +19,8 @@ export default defineComponent({
     const notes = useNotes()!
     const route = useRoute()
 
+    const findNote = () => notes.data.find(item => item.key === route.params.note)
+
     const editor = useEditor({
       extensions: [
         StarterKit
@@ -30,15 +32,18 @@ export default defineComponent({
         }
       },
       onUpdate: ({ editor }) => console.log(editor.getHTML()),
-      content: notes.data[Number(route.params.note)].content
+      content: findNote()?.content
     })
 
     watch(
       () => route.params.note,
-      noteId => {
-        if (editor.value) {
-          editor.value.commands.setContent(notes.data[Number(noteId)].content)
-        }
+      () => {
+        if (!editor.value) return
+
+        const note = findNote()
+        if (!note) return
+
+        editor.value.commands.setContent(note.content)
       }, { immediate: true })
 
     return { editor }

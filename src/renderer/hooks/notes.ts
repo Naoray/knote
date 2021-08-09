@@ -23,7 +23,7 @@ export const createNotes = (): Notes => {
         time: '1h ago',
         datetime: '2021-01-27T16:35',
         content:
-        'Podcast eres maiores assumenda dolorem facilis. Velit vel in a rerum natus facere. Enim rerum eaque qui facilis. Numquam laudantium sed id dolores omnis in. Eos reiciendis deserunt maiores et accusamus quod dolor.'
+        '<h1>Some notes</h1>test eres maiores assumenda dolorem facilis. Velit vel in a rerum natus facere. Enim rerum eaque qui facilis. Numquam laudantium sed id dolores omnis in. Eos reiciendis deserunt maiores et accusamus quod dolor.'
       },
       {
         key: '2',
