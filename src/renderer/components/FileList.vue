@@ -1,7 +1,7 @@
 <template>
   <ul class="divide-y divide-gray-200">
-    <router-link :to="{ name: 'NoteEditor', params: {note: note.key}}" v-for="note in notes" :key="note.key" custom v-slot="{ navigate }">
-      <li :key="note.key" @click="navigate" class="relative px-4 py-5 bg-white hover:bg-gray-50 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
+    <router-link :to="{ name: 'NoteEditor', params: {note: note.key}}" v-for="note in notes" :key="note.key" custom v-slot="{ navigate, isActive }">
+      <li :key="note.key" @click="navigate" :class="[isActive && 'bg-indigo-50']" class="relative px-4 py-5 bg-white hover:bg-gray-50 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
         <div class="flex justify-between space-x-3">
           <div class="flex-1 min-w-0">
             <a href="#" class="block focus:outline-none">

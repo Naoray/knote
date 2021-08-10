@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, protocol, BrowserWindow, Menu, MenuItem } from 'electron'
+import { app, protocol, BrowserWindow, Menu, MenuItem, ipcMain } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
 import { join } from 'path'
@@ -93,6 +93,75 @@ app.on('ready', async () => {
   }
   createWindow()
   createMenu()
+
+  ipcMain.on('request-files', (event) => {
+    event.reply('requested-files', [
+      {
+        key: '1',
+        title: 'Some notes',
+        time: '1h ago',
+        datetime: '2021-01-27T16:35',
+        content:
+        '<h1>Some notes</h1>test eres maiores assumenda dolorem facilis. Velit vel in a rerum natus facere. Enim rerum eaque qui facilis. Numquam laudantium sed id dolores omnis in. Eos reiciendis deserunt maiores et accusamus quod dolor.'
+      },
+      {
+        key: '2',
+        title: 'Velit placeat sit ducimus non sed',
+        time: '1d ago',
+        datetime: '2021-01-27T16:35',
+        content:
+        'Doloremque dolorem maiores assumenda dolorem facilis. Velit vel in a rerum natus facere. Enim rerum eaque qui facilis. Numquam laudantium sed id dolores omnis in. Eos reiciendis deserunt maiores et accusamus quod dolor.'
+      },
+      {
+        key: '3',
+        title: 'Lore',
+        time: '2d ago',
+        datetime: '2021-01-27T16:35',
+        content:
+        'Da dolorem maiores assumenda dolorem facilis. Velit vel in a rerum natus facere. Enim rerum eaque qui facilis. Numquam laudantium sed key d\'o\'lores omnis in. Eos reiciendis deserunt maiores et accusamus quod dolor.'
+      },
+      {
+        key: '4',
+        title: 'OIther notes',
+        time: '7d ago',
+        datetime: '2021-01-27T16:35',
+        content:
+        'Another maiores assumenda dolorem facilis. Velit vel in a rerum natus facere. Enim rerum eaque qui facilis. Numquam laudantium sed key d\'o\'lores omnis in. Eos reiciendis deserunt maiores et accusamus quod dolor.'
+      },
+      {
+        key: '5',
+        title: 'Velit placeat sit ducimus non sed',
+        time: '14d ago',
+        datetime: '2021-01-27T16:35',
+        content:
+        'Doloremque dolorem maiores assumenda dolorem facilis. Velit vel in a rerum natus facere. Enim rerum eaque qui facilis. Numquam laudantium sed key d\'o\'lores omnis in. Eos reiciendis deserunt maiores et accusamus quod dolor.'
+      },
+      {
+        key: '6',
+        title: 'Lore',
+        time: '15d ago',
+        datetime: '2021-01-27T16:35',
+        content:
+        'Da dolorem maiores assumenda dolorem facilis. Velit vel in a rerum natus facere. Enim rerum eaque qui facilis. Numquam laudantium sed key d\'o\'lores omnis in. Eos reiciendis deserunt maiores et accusamus quod dolor.'
+      },
+      {
+        key: '7',
+        title: 'Ramen Noodles',
+        time: '20d ago',
+        datetime: '2021-01-27T16:35',
+        content:
+        'Doloremque dolorem maiores assumenda dolorem facilis. Velit vel in a rerum natus facere. Enim rerum eaque qui facilis. Numquam laudantium sed key d\'o\'lores omnis in. Eos reiciendis deserunt maiores et accusamus quod dolor.'
+      },
+      {
+        key: '8',
+        title: 'Test',
+        time: '25d ago',
+        datetime: '2021-01-27T16:35',
+        content:
+        'Da dolorem maiores assumenda dolorem facilis. Velit vel in a rerum natus facere. Enim rerum eaque qui facilis. Numquam laudantium sed id dolores omnis in. Eos reiciendis deserunt maiores et accusamus quod dolor.'
+      }
+    ])
+  })
 })
 
 // Exit cleanly on request from parent process in development mode.

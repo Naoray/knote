@@ -16,10 +16,8 @@ export default defineComponent({
   },
 
   setup () {
-    const notes = useNotes()!
+    const { currentNote } = useNotes()!
     const route = useRoute()
-
-    const findNote = () => notes.data.find(item => item.key === route.params.note)
 
     const editor = useEditor({
       extensions: [
@@ -32,18 +30,22 @@ export default defineComponent({
         }
       },
       onUpdate: ({ editor }) => console.log(editor.getHTML()),
-      content: findNote()?.content
+      content: currentNote(String(route.params.note))?.content
     })
 
+    // set first file content on initial load
+    window.ipc.on('requested-files', () => {
+      const note = currentNote(String(route.params.note))
+      editor.value?.commands.setContent(note.content)
+    })
+
+    // set new file content on note change
     watch(
       () => route.params.note,
-      () => {
-        if (!editor.value) return
+      noteId => {
+        const note = currentNote(String(noteId))
 
-        const note = findNote()
-        if (!note) return
-
-        editor.value.commands.setContent(note.content)
+        editor.value?.commands.setContent(note.content)
       }, { immediate: true })
 
     return { editor }

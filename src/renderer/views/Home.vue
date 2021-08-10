@@ -1,5 +1,5 @@
 <template>
-  <div class="flex max-h-screen space-x-4">
+  <div class="flex max-h-screen min-h-screen space-x-4">
     <FileList class="w-1/3 overflow-y-auto border-r" />
     <Tiptap class="flex-1 py-8 overflow-y-auto" />
   </div>
