@@ -1,67 +1,29 @@
 'use strict'
 
 import { app, protocol, BrowserWindow, Menu, MenuItem, ipcMain } from 'electron'
-import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
-import { join } from 'path'
+import { serveMenu } from './Menu'
+import { createWindowManager, Window } from './Window'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
-let win: BrowserWindow
+let windowManager: Window
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } }
 ])
 
-async function createWindow () {
-  // Create the browser window.
-  win = new BrowserWindow({
+function createWindow () {
+  windowManager = createWindowManager({
     minWidth: 1200,
-    minHeight: 800,
-    webPreferences: {
-      // Use pluginOptions.nodeIntegration, leave this alone
-      // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
-      nodeIntegration: (process.env
-        .ELECTRON_NODE_INTEGRATION as unknown) as boolean,
-      contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
-      preload: join(__dirname, 'preload.js')
-    }
+    minHeight: 800
   })
-
-  if (process.env.WEBPACK_DEV_SERVER_URL) {
-    // Load the url of the dev server if in development mode
-    await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL as string)
-    if (!process.env.IS_TEST) win.webContents.openDevTools()
-  } else {
-    createProtocol('app')
-    // Load the index.html when not in development
-    win.loadURL('app://./index.html')
-  }
 }
 
 function createMenu () {
-  const template = [
-    new MenuItem({ role: 'fileMenu' }),
-    new MenuItem({ role: 'editMenu' }),
-    new MenuItem({ role: 'viewMenu' }),
-    new MenuItem({
-      label: 'Window',
-      submenu: [
-        {
-          label: 'Always Show Menu Bar',
-          type: 'checkbox',
-          checked: true,
-          click: (menuItem) => {
-            win.setAutoHideMenuBar(!menuItem.checked)
-            win.setMenuBarVisibility(menuItem.checked)
-          }
-        }
-      ]
-    })
-  ]
-
-  const menu = Menu.buildFromTemplate(template)
-  Menu.setApplicationMenu(menu)
+  if (windowManager) {
+    serveMenu(windowManager)
+  }
 }
 
 // Quit when all windows are closed.
