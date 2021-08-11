@@ -1,7 +1,8 @@
 'use strict'
 
-import { app, protocol, BrowserWindow, Menu, MenuItem, ipcMain } from 'electron'
+import { app, protocol, BrowserWindow, ipcMain } from 'electron'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
+import { htmlToMarkdown } from './Markdown'
 import { serveMenu } from './Menu'
 import { createWindowManager, Window } from './Window'
 const isDevelopment = process.env.NODE_ENV !== 'production'
@@ -123,6 +124,10 @@ app.on('ready', async () => {
         'Da dolorem maiores assumenda dolorem facilis. Velit vel in a rerum natus facere. Enim rerum eaque qui facilis. Numquam laudantium sed id dolores omnis in. Eos reiciendis deserunt maiores et accusamus quod dolor.'
       }
     ])
+  })
+
+  ipcMain.on('save', (event, content) => {
+    event.reply('saved', htmlToMarkdown(content))
   })
 })
 

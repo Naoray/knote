@@ -7,6 +7,7 @@ import { defineComponent, watch } from 'vue'
 
 import { useEditor, EditorContent } from '@tiptap/vue-3'
 import StarterKit from '@tiptap/starter-kit'
+import Highlight from '@tiptap/extension-highlight'
 import { useNotes } from '../hooks/notes'
 import { useRoute } from 'vue-router'
 
@@ -21,7 +22,8 @@ export default defineComponent({
 
     const editor = useEditor({
       extensions: [
-        StarterKit
+        StarterKit,
+        Highlight
       ],
       editorProps: {
         attributes: {
@@ -29,7 +31,6 @@ export default defineComponent({
             'max-w-none mx-10 prose prose-sm lg:prose-lg xl:prose-2xl focus:outline-none'
         }
       },
-      onUpdate: ({ editor }) => console.log(editor.getHTML()),
       content: currentNote(String(route.params.note))?.content
     })
 
@@ -37,6 +38,14 @@ export default defineComponent({
     window.ipc.on('requested-files', () => {
       const note = currentNote(String(route.params.note))
       editor.value?.commands.setContent(note.content)
+    })
+
+    window.ipc.on('saved', (content: string) => {
+      console.log(content)
+    })
+
+    window.ipc.on('trigger-save', () => {
+      window.ipc.send('save', editor.value?.getHTML())
     })
 
     // set new file content on note change
