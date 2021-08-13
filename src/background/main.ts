@@ -2,7 +2,7 @@
 
 import { app, protocol, BrowserWindow, ipcMain } from 'electron'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
-import { htmlToMarkdown } from './Markdown'
+import { htmlToMarkdown } from '../shared/Markdown'
 import { serveMenu } from './Menu'
 import { createWindowManager, Window } from './Window'
 const isDevelopment = process.env.NODE_ENV !== 'production'
@@ -64,64 +64,88 @@ app.on('ready', async () => {
         title: 'Some notes',
         time: '1h ago',
         datetime: '2021-01-27T16:35',
-        content:
-        '<h1>Some notes</h1>test eres maiores assumenda dolorem facilis. Velit vel in a rerum natus facere. Enim rerum eaque qui facilis. Numquam laudantium sed id dolores omnis in. Eos reiciendis deserunt maiores et accusamus quod dolor.'
+        content: {
+          markdown:
+          '# Some notes\ntest eres maiores assumenda dolorem facilis. Velit vel in a rerum natus facere. Enim rerum eaque qui facilis. Numquam laudantium sed id dolores omnis in. Eos reiciendis deserunt maiores et accusamus quod dolor.',
+          html: undefined
+        }
       },
       {
         key: '2',
         title: 'Velit placeat sit ducimus non sed',
         time: '1d ago',
         datetime: '2021-01-27T16:35',
-        content:
-        'Doloremque dolorem maiores assumenda dolorem facilis. Velit vel in a rerum natus facere. Enim rerum eaque qui facilis. Numquam laudantium sed id dolores omnis in. Eos reiciendis deserunt maiores et accusamus quod dolor.'
+        content: {
+          markdown:
+          'DBas asa dolorem maiores assumenda dolorem facilis. Velit vel in a rerum natus facere. Enim rerum eaque qui facilis. Numquam laudantium sed key d\'o\'lores omnis in. Eos reiciendis deserunt maiores et accusamus quod dolor.',
+          html: undefined
+        }
       },
       {
         key: '3',
         title: 'Lore',
         time: '2d ago',
         datetime: '2021-01-27T16:35',
-        content:
-        'Da dolorem maiores assumenda dolorem facilis. Velit vel in a rerum natus facere. Enim rerum eaque qui facilis. Numquam laudantium sed key d\'o\'lores omnis in. Eos reiciendis deserunt maiores et accusamus quod dolor.'
+        content: {
+          markdown:
+          'Da dolorem maiores assumenda dolorem facilis. Velit vel in a rerum natus facere. Enim rerum eaque qui facilis. Numquam laudantium sed key d\'o\'lores omnis in. Eos reiciendis deserunt maiores et accusamus quod dolor.',
+          html: undefined
+        }
       },
       {
         key: '4',
         title: 'OIther notes',
         time: '7d ago',
         datetime: '2021-01-27T16:35',
-        content:
-        'Another maiores assumenda dolorem facilis. Velit vel in a rerum natus facere. Enim rerum eaque qui facilis. Numquam laudantium sed key d\'o\'lores omnis in. Eos reiciendis deserunt maiores et accusamus quod dolor.'
+        content: {
+          markdown:
+            'Another maiores assumenda dolorem facilis. Velit vel in a rerum natus facere. Enim rerum eaque qui facilis. Numquam laudantium sed key d\'o\'lores omnis in. Eos reiciendis deserunt maiores et accusamus quod dolor.',
+          html: undefined
+        }
       },
       {
         key: '5',
         title: 'Velit placeat sit ducimus non sed',
         time: '14d ago',
         datetime: '2021-01-27T16:35',
-        content:
-        'Doloremque dolorem maiores assumenda dolorem facilis. Velit vel in a rerum natus facere. Enim rerum eaque qui facilis. Numquam laudantium sed key d\'o\'lores omnis in. Eos reiciendis deserunt maiores et accusamus quod dolor.'
+        content: {
+          markdown:
+            'Doloremque dolorem maiores assumenda dolorem facilis. Velit vel in a rerum natus facere. Enim rerum eaque qui facilis. Numquam laudantium sed key d\'o\'lores omnis in. Eos reiciendis deserunt maiores et accusamus quod dolor.',
+          html: undefined
+        }
       },
       {
         key: '6',
         title: 'Lore',
         time: '15d ago',
         datetime: '2021-01-27T16:35',
-        content:
-        'Da dolorem maiores assumenda dolorem facilis. Velit vel in a rerum natus facere. Enim rerum eaque qui facilis. Numquam laudantium sed key d\'o\'lores omnis in. Eos reiciendis deserunt maiores et accusamus quod dolor.'
+        content: {
+          markdown:
+          'Da dolorem maiores assumenda dolorem facilis. Velit vel in a rerum natus facere. Enim rerum eaque qui facilis. Numquam laudantium sed key d\'o\'lores omnis in. Eos reiciendis deserunt maiores et accusamus quod dolor.',
+          html: undefined
+        }
       },
       {
         key: '7',
         title: 'Ramen Noodles',
         time: '20d ago',
         datetime: '2021-01-27T16:35',
-        content:
-        'Doloremque dolorem maiores assumenda dolorem facilis. Velit vel in a rerum natus facere. Enim rerum eaque qui facilis. Numquam laudantium sed key d\'o\'lores omnis in. Eos reiciendis deserunt maiores et accusamus quod dolor.'
+        content: {
+          markdown:
+            'Doloremque dolorem maiores assumenda dolorem facilis. Velit vel in a rerum natus facere. Enim rerum eaque qui facilis. Numquam laudantium sed key d\'o\'lores omnis in. Eos reiciendis deserunt maiores et accusamus quod dolor.',
+          html: undefined
+        }
       },
       {
         key: '8',
         title: 'Test',
         time: '25d ago',
         datetime: '2021-01-27T16:35',
-        content:
-        'Da dolorem maiores assumenda dolorem facilis. Velit vel in a rerum natus facere. Enim rerum eaque qui facilis. Numquam laudantium sed id dolores omnis in. Eos reiciendis deserunt maiores et accusamus quod dolor.'
+        content: {
+          markdown:
+          'Da dolorem maiores assumenda dolorem facilis. Velit vel in a rerum natus facere. Enim rerum eaque qui facilis. Numquam laudantium sed id dolores omnis in. Eos reiciendis deserunt maiores et accusamus quod dolor.',
+          html: undefined
+        }
       }
     ])
   })

@@ -1,5 +1,5 @@
-import { App, inject, provide, reactive, Ref, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { markdownToHtml } from '@/shared/Markdown'
+import { App, inject, provide, Ref, ref } from 'vue'
 
 export const notesSymbol = Symbol('notes')
 
@@ -8,26 +8,40 @@ interface Note {
   title: string,
   time: string,
   datetime: string,
-  content: string
+  content: {
+    markdown: string,
+    html?: string
+  }
 }
 
 interface Notes {
   data: Ref<Note[]>,
-  currentNote: (key: string|number) => Note
+  currentNoteContent: (key: string|number) => string
 }
 
 export const createNotes = (): Notes => {
   const data = ref<Note[]>([])
 
   window.ipc.on('requested-files', (notes: Note[]) => {
-    data.value = notes
+    data.value = notes.map(note => {
+      note.content.html = markdownToHtml(note.content.markdown)
+      return note
+    })
   })
 
   window.ipc.send('request-files')
 
   return {
     data,
-    currentNote: (key: string|number) => data.value.find(item => item.key === key)!
+    currentNoteContent: (key: string|number): string => {
+      const note = data.value.find(item => item.key === key)!
+
+      if (note === undefined || note.content === undefined || note.content.html === undefined) {
+        return ''
+      }
+
+      return note.content.html
+    }
   }
 }
 

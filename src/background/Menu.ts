@@ -11,7 +11,7 @@ export const serveMenu = (windowManager: Window): void => {
           label: 'Save',
           accelerator: 'CommandOrControl+S',
           click: () => {
-            windowManager.window.webContents.send('trigger-save')
+            windowManager.window.webContents.send('save')
           }
         }
       ]

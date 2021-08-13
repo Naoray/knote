@@ -17,7 +17,7 @@ export default defineComponent({
   },
 
   setup () {
-    const { currentNote } = useNotes()!
+    const { currentNoteContent } = useNotes()!
     const route = useRoute()
 
     const editor = useEditor({
@@ -31,14 +31,19 @@ export default defineComponent({
             'max-w-none mx-10 prose prose-sm lg:prose-lg xl:prose-2xl focus:outline-none'
         }
       },
-      content: currentNote(String(route.params.note))?.content
+      content: 'loading...'
     })
 
+    const getCurrentNoteContent = () => {
+      const content = currentNoteContent(String(route.params.note))
+      editor.value?.commands.setContent(content)
+    }
+
     // set first file content on initial load
-    window.ipc.on('requested-files', () => {
-      const note = currentNote(String(route.params.note))
-      editor.value?.commands.setContent(note.content)
-    })
+    window.ipc.on('requested-files', getCurrentNoteContent)
+
+    // set new file content on note change
+    watch(() => route.params.note, getCurrentNoteContent)
 
     window.ipc.on('saved', (content: string) => {
       console.log(content)
@@ -47,15 +52,6 @@ export default defineComponent({
     window.ipc.on('trigger-save', () => {
       window.ipc.send('save', editor.value?.getHTML())
     })
-
-    // set new file content on note change
-    watch(
-      () => route.params.note,
-      noteId => {
-        const note = currentNote(String(noteId))
-
-        editor.value?.commands.setContent(note.content)
-      }, { immediate: true })
 
     return { editor }
   }

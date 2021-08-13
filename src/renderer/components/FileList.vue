@@ -13,7 +13,7 @@
         </div>
         <div class="mt-1">
           <p class="text-sm text-gray-600 line-clamp-2">
-            {{ note.content }}
+            {{ note.content.markdown }}
           </p>
         </div>
       </li>
