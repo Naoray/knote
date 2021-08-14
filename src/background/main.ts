@@ -5,12 +5,12 @@ import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
 import { readdirSync, writeFile } from 'original-fs'
 import { htmlToMarkdown } from '../shared/Markdown'
 import { serveMenu } from './menu'
-import Storage from './storage'
 import { createWindowManager, Window } from './window'
+import Store from 'electron-store'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 let windowManager: Window
-const storage = new Storage('userconfig')
+const store = new Store()
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -21,13 +21,13 @@ function createWindow () {
   windowManager = createWindowManager({
     minWidth: 1200,
     minHeight: 800,
-    autoHideMenuBar: storage.get('menuIsAlwaysHidden') || false
+    autoHideMenuBar: !!store.get('menuIsAlwaysHidden') || false
   })
 }
 
 function createMenu () {
   if (windowManager) {
-    serveMenu(windowManager, storage)
+    serveMenu(windowManager, store)
   }
 }
 

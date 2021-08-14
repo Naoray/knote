@@ -1,8 +1,8 @@
 import { Menu, MenuItem } from 'electron'
-import Storage from './storage'
+import Store from 'electron-store'
 import { Window } from './window'
 
-export const serveMenu = (windowManager: Window, storage: Storage): void => {
+export const serveMenu = (windowManager: Window, storage: Store): void => {
   const template = [
     new MenuItem({
       role: 'fileMenu',
