@@ -1,13 +1,16 @@
 'use strict'
 
-import { app, protocol, BrowserWindow, ipcMain } from 'electron'
+import { app, protocol, BrowserWindow, ipcMain, dialog } from 'electron'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
+import { readdirSync, writeFile } from 'original-fs'
 import { htmlToMarkdown } from '../shared/Markdown'
-import { serveMenu } from './Menu'
-import { createWindowManager, Window } from './Window'
+import { serveMenu } from './menu'
+import Storage from './storage'
+import { createWindowManager, Window } from './window'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 let windowManager: Window
+const storage = new Storage('userconfig')
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -17,13 +20,14 @@ protocol.registerSchemesAsPrivileged([
 function createWindow () {
   windowManager = createWindowManager({
     minWidth: 1200,
-    minHeight: 800
+    minHeight: 800,
+    autoHideMenuBar: storage.get('menuIsAlwaysHidden') || false
   })
 }
 
 function createMenu () {
   if (windowManager) {
-    serveMenu(windowManager)
+    serveMenu(windowManager, storage)
   }
 }
 
@@ -58,100 +62,35 @@ app.on('ready', async () => {
   createMenu()
 
   ipcMain.on('request-files', (event) => {
-    event.reply('requested-files', [
-      {
-        key: '1',
-        title: 'Some notes',
-        time: '1h ago',
-        datetime: '2021-01-27T16:35',
-        content: {
-          markdown:
-          '# Some notes\ntest eres maiores assumenda dolorem facilis. Velit vel in a rerum natus facere. Enim rerum eaque qui facilis. Numquam laudantium sed id dolores omnis in. Eos reiciendis deserunt maiores et accusamus quod dolor.',
-          html: undefined
-        }
-      },
-      {
-        key: '2',
-        title: 'Velit placeat sit ducimus non sed',
-        time: '1d ago',
-        datetime: '2021-01-27T16:35',
-        content: {
-          markdown:
-          'DBas asa dolorem maiores assumenda dolorem facilis. Velit vel in a rerum natus facere. Enim rerum eaque qui facilis. Numquam laudantium sed key d\'o\'lores omnis in. Eos reiciendis deserunt maiores et accusamus quod dolor.',
-          html: undefined
-        }
-      },
-      {
-        key: '3',
-        title: 'Lore',
-        time: '2d ago',
-        datetime: '2021-01-27T16:35',
-        content: {
-          markdown:
-          'Da dolorem maiores assumenda dolorem facilis. Velit vel in a rerum natus facere. Enim rerum eaque qui facilis. Numquam laudantium sed key d\'o\'lores omnis in. Eos reiciendis deserunt maiores et accusamus quod dolor.',
-          html: undefined
-        }
-      },
-      {
-        key: '4',
-        title: 'OIther notes',
-        time: '7d ago',
-        datetime: '2021-01-27T16:35',
-        content: {
-          markdown:
-            'Another maiores assumenda dolorem facilis. Velit vel in a rerum natus facere. Enim rerum eaque qui facilis. Numquam laudantium sed key d\'o\'lores omnis in. Eos reiciendis deserunt maiores et accusamus quod dolor.',
-          html: undefined
-        }
-      },
-      {
-        key: '5',
-        title: 'Velit placeat sit ducimus non sed',
-        time: '14d ago',
-        datetime: '2021-01-27T16:35',
-        content: {
-          markdown:
-            'Doloremque dolorem maiores assumenda dolorem facilis. Velit vel in a rerum natus facere. Enim rerum eaque qui facilis. Numquam laudantium sed key d\'o\'lores omnis in. Eos reiciendis deserunt maiores et accusamus quod dolor.',
-          html: undefined
-        }
-      },
-      {
-        key: '6',
-        title: 'Lore',
-        time: '15d ago',
-        datetime: '2021-01-27T16:35',
-        content: {
-          markdown:
-          'Da dolorem maiores assumenda dolorem facilis. Velit vel in a rerum natus facere. Enim rerum eaque qui facilis. Numquam laudantium sed key d\'o\'lores omnis in. Eos reiciendis deserunt maiores et accusamus quod dolor.',
-          html: undefined
-        }
-      },
-      {
-        key: '7',
-        title: 'Ramen Noodles',
-        time: '20d ago',
-        datetime: '2021-01-27T16:35',
-        content: {
-          markdown:
-            'Doloremque dolorem maiores assumenda dolorem facilis. Velit vel in a rerum natus facere. Enim rerum eaque qui facilis. Numquam laudantium sed key d\'o\'lores omnis in. Eos reiciendis deserunt maiores et accusamus quod dolor.',
-          html: undefined
-        }
-      },
-      {
-        key: '8',
-        title: 'Test',
-        time: '25d ago',
-        datetime: '2021-01-27T16:35',
-        content: {
-          markdown:
-          'Da dolorem maiores assumenda dolorem facilis. Velit vel in a rerum natus facere. Enim rerum eaque qui facilis. Numquam laudantium sed id dolores omnis in. Eos reiciendis deserunt maiores et accusamus quod dolor.',
-          html: undefined
-        }
-      }
-    ])
+    event.reply('requested-files', [])
   })
 
   ipcMain.on('save', (event, content) => {
-    event.reply('saved', htmlToMarkdown(content))
+    const path = dialog.showSaveDialogSync(windowManager.window, {
+      filters: [
+        { name: 'Markdown Files', extensions: ['md'] }
+      ]
+    })
+
+    if (path === undefined) {
+      return
+    }
+
+    writeFile(path, htmlToMarkdown(content), err => err && dialog.showErrorBox('Saving unsuccessful', err.stack!))
+  })
+
+  ipcMain.on('openProject', event => {
+    const projectPath = dialog.showOpenDialogSync(windowManager.window, {
+      defaultPath: '~/',
+      properties: ['openDirectory', 'createDirectory']
+    })
+
+    if (projectPath === undefined) {
+      return
+    }
+
+    console.log(readdirSync(projectPath[0]))
+    event.reply('openProject', projectPath)
   })
 })
 

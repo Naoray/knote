@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron'
 
-const validChannels = ['request-files', 'requested-files', 'trigger-save', 'saved', 'save']
+const validChannels = ['request-files', 'requested-files', 'save', 'openProject']
 
 contextBridge.exposeInMainWorld(
   'ipc', {

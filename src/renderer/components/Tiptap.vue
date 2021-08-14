@@ -28,7 +28,7 @@ export default defineComponent({
       editorProps: {
         attributes: {
           class:
-            'max-w-none mx-10 prose prose-sm lg:prose-lg xl:prose-2xl focus:outline-none'
+            'max-w-none mx-10 prose prose-sm lg:prose-m xl:prose-lg focus:outline-none'
         }
       },
       content: 'loading...'
@@ -45,11 +45,7 @@ export default defineComponent({
     // set new file content on note change
     watch(() => route.params.note, getCurrentNoteContent)
 
-    window.ipc.on('saved', (content: string) => {
-      console.log(content)
-    })
-
-    window.ipc.on('trigger-save', () => {
+    window.ipc.on('save', () => {
       window.ipc.send('save', editor.value?.getHTML())
     })
 

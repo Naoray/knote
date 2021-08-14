@@ -1,6 +1,6 @@
 <template>
   <div class="flex max-h-screen min-h-screen space-x-4">
-    <FileList class="w-1/3 overflow-y-auto border-r" />
+    <FileList class="w-1/3 overflow-y-auto border-r xl:w-1/4" />
     <Tiptap class="flex-1 py-8 overflow-y-auto" />
   </div>
 </template>
@@ -12,7 +12,7 @@ import FileList from '@components/FileList.vue'
 import Tiptap from '@components/Tiptap.vue'
 
 export default defineComponent({
-  name: 'Home',
+  name: 'Editor',
   components: {
     FileList,
     Tiptap

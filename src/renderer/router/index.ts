@@ -1,16 +1,17 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
-import Home from '../views/Home.vue'
+import Editor from '../views/Editor.vue'
+import Start from '../views/Start.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     name: 'Home',
-    redirect: { name: 'NoteEditor', params: { note: 1 } }
+    component: Start
   },
   {
     path: '/notes/:note',
     name: 'NoteEditor',
-    component: Home
+    component: Editor
   }
 ]
 

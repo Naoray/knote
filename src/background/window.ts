@@ -1,26 +1,22 @@
 import { BrowserWindow } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import { join } from 'path'
-
-interface BrowserWindowOptions {
-  minWidth: number,
-  minHeight: number,
-}
+import { BrowserWindowConstructorOptions } from 'electron/main'
 
 export class Window {
   window: BrowserWindow
 
-  constructor (options: BrowserWindowOptions) {
+  constructor (options: BrowserWindowConstructorOptions) {
     this.window = new BrowserWindow({
-      minWidth: options.minWidth,
-      minHeight: options.minHeight,
+      ...options,
       webPreferences: {
         // Use pluginOptions.nodeIntegration, leave this alone
         // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
         nodeIntegration: (process.env
           .ELECTRON_NODE_INTEGRATION as unknown) as boolean,
         contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
-        preload: join(__dirname, 'preload.js')
+        preload: join(__dirname, 'preload.js'),
+        spellcheck: false
       }
     })
   }
@@ -38,7 +34,7 @@ export class Window {
   }
 }
 
-export const createWindowManager = (options: BrowserWindowOptions): Window => {
+export const createWindowManager = (options: BrowserWindowConstructorOptions): Window => {
   const manager = new Window(options)
 
   const laodWindow = async () => {

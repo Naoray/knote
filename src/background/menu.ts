@@ -1,7 +1,8 @@
-import { ipcMain, Menu, MenuItem } from 'electron'
-import { Window } from './Window'
+import { Menu, MenuItem } from 'electron'
+import Storage from './storage'
+import { Window } from './window'
 
-export const serveMenu = (windowManager: Window): void => {
+export const serveMenu = (windowManager: Window, storage: Storage): void => {
   const template = [
     new MenuItem({
       role: 'fileMenu',
@@ -24,10 +25,11 @@ export const serveMenu = (windowManager: Window): void => {
         {
           label: 'Always Show Menu Bar',
           type: 'checkbox',
-          checked: true,
+          checked: !storage.get('menuIsAlwaysHidden'),
           click: (menuItem) => {
             windowManager.window.setAutoHideMenuBar(!menuItem.checked)
             windowManager.window.setMenuBarVisibility(menuItem.checked)
+            storage.set('menuIsAlwaysHidden', !menuItem.checked)
           }
         }
       ]
