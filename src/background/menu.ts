@@ -1,8 +1,9 @@
+import { Schema } from '@/shared/store'
 import { Menu, MenuItem } from 'electron'
 import Store from 'electron-store'
 import { Window } from './window'
 
-export const serveMenu = (windowManager: Window, storage: Store): void => {
+export const serveMenu = (windowManager: Window, store: Store<Schema>): void => {
   const template = [
     new MenuItem({
       role: 'fileMenu',
@@ -25,11 +26,11 @@ export const serveMenu = (windowManager: Window, storage: Store): void => {
         {
           label: 'Always Show Menu Bar',
           type: 'checkbox',
-          checked: !storage.get('menuIsAlwaysHidden'),
+          checked: !store.get('menuIsAlwaysHidden'),
           click: (menuItem) => {
             windowManager.window.setAutoHideMenuBar(!menuItem.checked)
             windowManager.window.setMenuBarVisibility(menuItem.checked)
-            storage.set('menuIsAlwaysHidden', !menuItem.checked)
+            store.set('menuIsAlwaysHidden', !menuItem.checked)
           }
         }
       ]

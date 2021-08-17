@@ -1,72 +1,33 @@
 'use strict'
 
-import { app, protocol, BrowserWindow, ipcMain, dialog } from 'electron'
-import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
-import { readdirSync, writeFile } from 'original-fs'
-import { htmlToMarkdown } from '../shared/Markdown'
-import { serveMenu } from './menu'
-import { createWindowManager, Window } from './window'
-import Store from 'electron-store'
+import { htmlToMarkdown } from '@/shared/markdown'
+import { dialog, ipcMain, protocol } from 'electron'
+import { App } from './app'
+import { join } from 'path'
+import { readdirSync, readFileSync, statSync, writeFile } from 'original-fs'
+import { Note, Notes } from '@/shared/types'
 const isDevelopment = process.env.NODE_ENV !== 'production'
-
-let windowManager: Window
-const store = new Store()
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } }
 ])
 
-function createWindow () {
-  windowManager = createWindowManager({
-    minWidth: 1200,
-    minHeight: 800,
-    autoHideMenuBar: !!store.get('menuIsAlwaysHidden') || false
-  })
-}
+let notes: Note[]
 
-function createMenu () {
-  if (windowManager) {
-    serveMenu(windowManager, store)
-  }
-}
+const app = new App(isDevelopment)
 
-// Quit when all windows are closed.
-app.on('window-all-closed', () => {
-  // On macOS it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
-})
+app.boot()
 
-app.on('activate', () => {
-  // On macOS it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (BrowserWindow.getAllWindows().length === 0) createWindow()
-})
-
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.on('ready', async () => {
-  if (isDevelopment && !process.env.IS_TEST) {
-    // Install Vue Devtools
-    try {
-      await installExtension(VUEJS3_DEVTOOLS)
-    } catch (e) {
-      console.error('Vue Devtools failed to install:', e.toString())
-    }
-  }
-  createWindow()
-  createMenu()
-
+app.electron.on('ready', async () => {
   ipcMain.on('request-files', (event) => {
-    event.reply('requested-files', [])
+    event.reply('requested-files', notes)
   })
 
   ipcMain.on('save', (event, content) => {
-    const path = dialog.showSaveDialogSync(windowManager.window, {
+    if (!app.windowManager) return
+
+    const path = dialog.showSaveDialogSync(app.windowManager.window, {
       filters: [
         { name: 'Markdown Files', extensions: ['md'] }
       ]
@@ -80,8 +41,10 @@ app.on('ready', async () => {
   })
 
   ipcMain.on('openProject', event => {
-    const projectPath = dialog.showOpenDialogSync(windowManager.window, {
-      defaultPath: '~/',
+    if (!app.windowManager) return
+
+    const projectPath = dialog.showOpenDialogSync(app.windowManager.window, {
+      defaultPath: app.store.get('projectRoot'),
       properties: ['openDirectory', 'createDirectory']
     })
 
@@ -89,22 +52,22 @@ app.on('ready', async () => {
       return
     }
 
-    console.log(readdirSync(projectPath[0]))
-    event.reply('openProject', projectPath)
-  })
-})
+    const selectedPath: string = projectPath[0]
+    app.store.set('projectRoot', selectedPath)
 
-// Exit cleanly on request from parent process in development mode.
-if (isDevelopment) {
-  if (process.platform === 'win32') {
-    process.on('message', data => {
-      if (data === 'graceful-exit') {
-        app.quit()
+    notes = readdirSync(selectedPath).map((path) :Note => {
+      const filePath = join(selectedPath, path)
+      const markdown = readFileSync(filePath).toString()
+      const stats = statSync(filePath)
+
+      return {
+        key: stats.birthtimeMs,
+        datetime: stats.birthtime.toString(),
+        markdown,
+        html: htmlToMarkdown(markdown)
       }
     })
-  } else {
-    process.on('SIGTERM', () => {
-      app.quit()
-    })
-  }
-}
+
+    event.reply('openProject', notes[0])
+  })
+})

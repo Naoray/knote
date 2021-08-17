@@ -1,46 +1,23 @@
-import { markdownToHtml } from '@/shared/Markdown'
-import { App, inject, provide, Ref, ref } from 'vue'
+import { Note, Notes } from '@/shared/types'
+import { App, inject, provide, ref } from 'vue'
 
 export const notesSymbol = Symbol('notes')
-
-interface Note {
-  key: string,
-  title: string,
-  time: string,
-  datetime: string,
-  content: {
-    markdown: string,
-    html?: string
-  }
-}
-
-interface Notes {
-  data: Ref<Note[]>,
-  currentNoteContent: (key: string|number) => string
-}
 
 export const createNotes = (): Notes => {
   const data = ref<Note[]>([])
 
   window.ipc.on('requested-files', (notes: Note[]) => {
-    data.value = notes.map(note => {
-      note.content.html = markdownToHtml(note.content.markdown)
-      return note
-    })
+    data.value = notes
   })
 
   window.ipc.send('request-files')
 
   return {
     data,
-    currentNoteContent: (key: string|number): string => {
-      const note = data.value.find(item => item.key === key)!
+    currentNoteContent: (key: string): string => {
+      const note = data.value.find(item => String(item.key) === key)!
 
-      if (note === undefined || note.content === undefined || note.content.html === undefined) {
-        return ''
-      }
-
-      return note.content.html
+      return note.html
     }
   }
 }
