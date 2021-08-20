@@ -1,11 +1,10 @@
 'use strict'
 
-import { htmlToMarkdown } from '@/shared/markdown'
 import { dialog, ipcMain, protocol } from 'electron'
 import { App } from './app'
 import { join } from 'path'
 import { readdirSync, readFileSync, statSync, writeFile } from 'original-fs'
-import { Note, Notes } from '@/shared/types'
+import { Note } from '@/shared/types'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 // Scheme must be registered before the app is ready
@@ -37,7 +36,7 @@ app.electron.on('ready', async () => {
       return
     }
 
-    writeFile(path, htmlToMarkdown(content), err => err && dialog.showErrorBox('Saving unsuccessful', err.stack!))
+    writeFile(path, content, err => err && dialog.showErrorBox('Saving unsuccessful', err.stack!))
   })
 
   ipcMain.on('openProject', event => {
@@ -57,14 +56,13 @@ app.electron.on('ready', async () => {
 
     notes = readdirSync(selectedPath).map((path) :Note => {
       const filePath = join(selectedPath, path)
-      const markdown = readFileSync(filePath).toString()
+      const content = readFileSync(filePath).toString()
       const stats = statSync(filePath)
 
       return {
         key: stats.birthtimeMs,
         datetime: stats.birthtime.toString(),
-        markdown,
-        html: htmlToMarkdown(markdown)
+        content
       }
     })
 

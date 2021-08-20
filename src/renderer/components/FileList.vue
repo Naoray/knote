@@ -7,7 +7,7 @@
         </div>
         <div class="mt-1">
           <p class="text-sm text-gray-600 line-clamp-2">
-            {{ note.markdown }}
+            {{ note.content }}
           </p>
         </div>
       </li>

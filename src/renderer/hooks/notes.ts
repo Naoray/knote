@@ -6,18 +6,17 @@ export const notesSymbol = Symbol('notes')
 export const createNotes = (): Notes => {
   const data = ref<Note[]>([])
 
-  window.ipc.on('requested-files', (notes: Note[]) => {
-    data.value = notes
-  })
-
-  window.ipc.send('request-files')
+  window.ipc.on('requested-files', (notes: Note[]) => (data.value = notes))
 
   return {
     data,
     currentNoteContent: (key: string): string => {
       const note = data.value.find(item => String(item.key) === key)!
 
-      return note.html
+      return note.content
+    },
+    requestNotes: (): void => {
+      window.ipc.send('request-files')
     }
   }
 }

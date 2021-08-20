@@ -1,14 +1,19 @@
-import { NodeHtmlMarkdown } from 'node-html-markdown'
-import MarkdownIt from 'markdown-it'
+import MarkdownIt, { Options, PresetName } from 'markdown-it'
 
-let markdownIt: MarkdownIt
+class Markdown {
+  private markdownIt: MarkdownIt
 
-export const htmlToMarkdown = (content: string): string => NodeHtmlMarkdown.translate(content)
-
-export const markdownToHtml = (content: string): string => {
-  if (!markdownIt) {
-    markdownIt = new MarkdownIt()
+  constructor (preset: PresetName, options?: Options) {
+    this.markdownIt = new MarkdownIt(preset, options)
   }
 
-  return markdownIt.render(content)
+  toHtml (content: string): string {
+    return this.markdownIt.render(content)
+  }
+}
+
+export const createMarkdown = (preset: PresetName, options?: Options): Markdown => {
+  const markdown = new Markdown(preset, options)
+
+  return markdown
 }
