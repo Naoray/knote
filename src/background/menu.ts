@@ -19,20 +19,43 @@ export const serveMenu = (windowManager: Window, store: Store<Schema>): void => 
       ]
     }),
     new MenuItem({ role: 'editMenu' }),
-    new MenuItem({ role: 'viewMenu' }),
     new MenuItem({
-      label: 'Window',
+      role: 'viewMenu',
       submenu: [
         {
-          label: 'Always Show Menu Bar',
-          type: 'checkbox',
-          checked: !store.get('menuIsAlwaysHidden'),
-          click: (menuItem) => {
-            windowManager.window.setAutoHideMenuBar(!menuItem.checked)
-            windowManager.window.setMenuBarVisibility(menuItem.checked)
-            store.set('menuIsAlwaysHidden', !menuItem.checked)
-          }
-        }
+          label: 'Appearance',
+          submenu: [
+            {
+              label: 'Always Show Menu Bar',
+              type: 'checkbox',
+              checked: !store.get('menuIsAlwaysHidden'),
+              click: (menuItem) => {
+                windowManager.window.setAutoHideMenuBar(!menuItem.checked)
+                windowManager.window.setMenuBarVisibility(menuItem.checked)
+                store.set('menuIsAlwaysHidden', !menuItem.checked)
+              }
+            }
+          ]
+        },
+        {
+          label: 'Editor',
+          submenu: [
+            {
+              label: 'Show Rendered Markdown',
+              accelerator: 'CommandOrControl+M',
+              click: () => windowManager.window.webContents.send('toggleRenderedMarkdown')
+            }
+          ]
+        },
+        { type: 'separator' },
+        { role: 'zoomIn' },
+        { role: 'zoomOut' },
+        { role: 'resetZoom' },
+        { role: 'togglefullscreen' },
+        { type: 'separator' },
+        { role: 'reload' },
+        { role: 'forceReload' },
+        { role: 'toggleDevTools' }
       ]
     })
   ]

@@ -1,12 +1,12 @@
 <template>
   <div class="flex">
-    <textarea class="w-1/2 mx-10 prose-sm prose lg:prose-m xl:prose-lg focus:outline-none" v-model="content"></textarea>
-    <div class="w-1/2 mx-10 prose-sm prose lg:prose-m xl:prose-lg focus:outline-none" v-html="renderedContent"></div>
+    <textarea v-if="!showRendered" ref="editor" class="w-1/2 mx-10 prose-sm prose lg:prose-m xl:prose-lg focus:outline-none" v-model="content"></textarea>
+    <div v-else @click="focusOnEditor" class="w-1/2 mx-10 prose-sm prose lg:prose-m xl:prose-lg focus:outline-none" v-html="renderedContent"></div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watch } from 'vue'
+import { defineComponent, nextTick, ref, watch } from 'vue'
 
 import { useNotes } from '../hooks/notes'
 import { useRoute } from 'vue-router'
@@ -14,6 +14,9 @@ import { createMarkdown } from '@/shared/markdown'
 
 export default defineComponent({
   setup () {
+    const showRendered = ref(true)
+    window.ipc.on('toggleRenderedMarkdown', () => (showRendered.value = !showRendered.value))
+
     const markdown = createMarkdown('commonmark', {
       html: true,
       linkify: true,
@@ -36,12 +39,29 @@ export default defineComponent({
     window.ipc.on('requested-files', getCurrentNoteContent)
 
     // set new file content on note change
-    watch(() => route.params.note, getCurrentNoteContent)
+    watch(() => route.params.note, () => {
+      getCurrentNoteContent()
+      showRendered.value = true
+    })
     watch(content, current => (renderedContent.value = markdown.toHtml(current)))
 
     window.ipc.on('save', () => window.ipc.send('save', content.value))
 
-    return { content, renderedContent }
+    const editor = ref<HTMLTextAreaElement | null>(null)
+    return {
+      content,
+      renderedContent,
+      showRendered,
+      editor,
+      focusOnEditor: () => {
+        showRendered.value = false
+        nextTick(() => {
+          if (editor.value === null) return
+
+          editor.value.focus()
+        })
+      }
+    }
   }
 })
 </script>
