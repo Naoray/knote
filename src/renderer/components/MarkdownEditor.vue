@@ -1,7 +1,7 @@
 <template>
   <div class="flex">
-    <textarea v-if="!showRendered" ref="editor" class="w-1/2 mx-10 prose-sm prose lg:prose-m xl:prose-lg focus:outline-none" v-model="content"></textarea>
-    <div v-else @click="focusOnEditor" class="w-1/2 mx-10 prose-sm prose lg:prose-m xl:prose-lg focus:outline-none" v-html="renderedContent"></div>
+    <textarea v-if="!showRendered" ref="editor" class="flex-1 prose max-w-none focus:outline-none" v-model="content"></textarea>
+    <div v-else @click="focusOnEditor" class="flex-1 prose-sm prose lg:prose-m xl:prose-lg focus:outline-none max-w-none" v-html="renderedContent"></div>
   </div>
 </template>
 
