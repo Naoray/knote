@@ -1,9 +1,9 @@
 import { Note, Notes } from '@/shared/types'
-import { App, inject, provide, ref } from 'vue'
+import { App, inject, ref } from 'vue'
 
-export const notesSymbol = Symbol('notes')
+const notesSymbol = Symbol('notes')
 
-export const createNotes = (): Notes => {
+const createNotes = (): Notes => {
   const data = ref<Note[]>([])
 
   window.ipc.on('requested-files', (notes: Note[]) => (data.value = notes))
@@ -22,5 +22,4 @@ export const createNotes = (): Notes => {
 }
 
 export const useNotes = () => inject<Notes>(notesSymbol)
-export const provideNotes = () => provide<Notes>(notesSymbol, createNotes())
 export default (app: App) => app.provide<Notes>(notesSymbol, createNotes())
