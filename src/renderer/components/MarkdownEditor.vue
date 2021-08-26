@@ -11,11 +11,15 @@ import { defineComponent, nextTick, ref, watch } from 'vue'
 import { useNotes } from '../hooks/notes'
 import { useRoute } from 'vue-router'
 import { createMarkdown } from '@/shared/markdown'
+import { useBroadcasts } from '../hooks/broadcasts'
 
 export default defineComponent({
   setup () {
+    const { editor: editorBroadcast } = useBroadcasts()!
+
     const showRendered = ref(true)
     window.ipc.on('toggleRenderedMarkdown', () => (showRendered.value = !showRendered.value))
+    watch(editorBroadcast, values => (showRendered.value = values.showRenderedMarkdown))
 
     const markdown = createMarkdown('commonmark', {
       html: true,

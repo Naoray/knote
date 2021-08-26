@@ -12,9 +12,7 @@ export const serveMenu = (windowManager: Window, store: Store<Schema>): void => 
         {
           label: 'Save',
           accelerator: 'CommandOrControl+S',
-          click: () => {
-            windowManager.window.webContents.send('save')
-          }
+          click: () => windowManager.window.webContents.send('save')
         }
       ]
     }),
@@ -34,6 +32,13 @@ export const serveMenu = (windowManager: Window, store: Store<Schema>): void => 
                 windowManager.window.setMenuBarVisibility(menuItem.checked)
                 store.set('menuIsAlwaysHidden', !menuItem.checked)
               }
+            },
+            {
+              label: 'Show Side Bar',
+              type: 'checkbox',
+              checked: true,
+              accelerator: 'CommandOrControl+B',
+              click: (menuItem) => windowManager.window.webContents.send('appearanceChange', { item: 'showSidebar', value: menuItem.checked })
             }
           ]
         },
@@ -43,7 +48,7 @@ export const serveMenu = (windowManager: Window, store: Store<Schema>): void => 
             {
               label: 'Show Rendered Markdown',
               accelerator: 'CommandOrControl+M',
-              click: () => windowManager.window.webContents.send('toggleRenderedMarkdown')
+              click: () => windowManager.window.webContents.send('editorChange', { item: 'showRenderedMarkdown' })
             }
           ]
         },
