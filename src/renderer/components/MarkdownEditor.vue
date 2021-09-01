@@ -18,7 +18,6 @@ export default defineComponent({
     const { editor: editorBroadcast } = useBroadcasts()!
 
     const showRendered = ref(true)
-    window.ipc.on('toggleRenderedMarkdown', () => (showRendered.value = !showRendered.value))
     watch(editorBroadcast, values => (showRendered.value = values.showRenderedMarkdown))
 
     const markdown = createMarkdown('commonmark', {
