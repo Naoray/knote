@@ -2,6 +2,7 @@ import { BrowserWindow } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import { join } from 'path'
 import { BrowserWindowConstructorOptions } from 'electron/main'
+import { App } from './app'
 
 export class Window {
   window: BrowserWindow
@@ -38,7 +39,7 @@ export const createWindowManager = (options: BrowserWindowConstructorOptions): W
   const manager = new Window(options)
 
   const laodWindow = async () => {
-    manager.load()
+    await manager.load()
   }
 
   laodWindow()

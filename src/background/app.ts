@@ -1,9 +1,13 @@
 import { createStore, Schema } from '@/shared/store'
-import { app, App as ElectronApp, BrowserWindow } from 'electron'
+import { app, App as ElectronApp, BrowserWindow, ipcMain } from 'electron'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
 import ElectronStore from 'electron-store'
 import { serveMenu } from './menu'
 import { createWindowManager, Window } from './window'
+
+interface fn {
+  (): void;
+}
 
 export class App {
   electron: ElectronApp
@@ -11,10 +15,18 @@ export class App {
   store: ElectronStore<Schema>
   windowManager?: Window
 
+  onAppReadyCallbacks: fn[]
+
   constructor (isDevelopment: boolean) {
     this.isDevelopment = isDevelopment
     this.store = createStore()
     this.electron = app
+
+    this.onAppReadyCallbacks = []
+  }
+
+  onAppReady (callback: fn): void {
+    this.onAppReadyCallbacks.push(callback)
   }
 
   setupWindow (): void {
@@ -51,6 +63,10 @@ export class App {
   }
 
   enableAppListener ():void {
+    this.electron.on('ready', () => {
+      this.onAppReadyCallbacks.forEach(callback => (callback()))
+    })
+
     // Quit when all windows are closed.
     this.electron.on('window-all-closed', () => {
       // On macOS it is common for applications and their menu bar
@@ -78,6 +94,7 @@ export class App {
           console.error('Vue Devtools failed to install:', e.toString())
         }
       }
+
       this.setupWindow()
       this.serveMenu()
     })

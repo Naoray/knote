@@ -2,9 +2,9 @@
 
 import { dialog, ipcMain, protocol } from 'electron'
 import { App } from './app'
-import { join } from 'path'
-import { readdirSync, readFileSync, statSync, writeFile } from 'original-fs'
+import { writeFile } from 'original-fs'
 import { Note } from '@/shared/types'
+import Notes from './notes'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 // Scheme must be registered before the app is ready
@@ -18,7 +18,14 @@ const app = new App(isDevelopment)
 
 app.boot()
 
-app.electron.on('ready', async () => {
+app.onAppReady(() => {
+  ipcMain.on('appLoaded', (event) => {
+    if (!app.store.has('projectRoot')) return
+
+    notes = Notes.readFrom(app.store.get('projectRoot'))
+    event.reply('openProject', notes[0])
+  })
+
   ipcMain.on('request-files', (event) => {
     event.reply('requested-files', notes)
   })
@@ -54,17 +61,7 @@ app.electron.on('ready', async () => {
     const selectedPath: string = projectPath[0]
     app.store.set('projectRoot', selectedPath)
 
-    notes = readdirSync(selectedPath).map((path) :Note => {
-      const filePath = join(selectedPath, path)
-      const content = readFileSync(filePath).toString()
-      const stats = statSync(filePath)
-
-      return {
-        key: stats.birthtimeMs,
-        datetime: stats.birthtime.toString(),
-        content
-      }
-    })
+    notes = Notes.readFrom(selectedPath)
 
     event.reply('openProject', notes[0])
   })
