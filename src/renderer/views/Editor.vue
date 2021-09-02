@@ -10,7 +10,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref, watch } from 'vue'
+import { defineComponent, ref, watch } from 'vue'
 
 import FileList from '@components/FileList.vue'
 import MarkdownEditor from '@components/MarkdownEditor.vue'
@@ -29,10 +29,7 @@ export default defineComponent({
     Pane
   },
   setup () {
-    const { requestNotes } = useNotes()!
     const { appearance } = useBroadcasts()!
-
-    requestNotes()
 
     const showSidebar = ref(true)
 

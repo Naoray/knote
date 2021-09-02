@@ -1,7 +1,7 @@
 import { Ref } from 'vue'
 
 export interface Note {
-  key: number,
+  key: string,
   datetime: string,
   content: string,
 }
@@ -9,5 +9,4 @@ export interface Note {
 export interface Notes {
   data: Ref<Note[]>,
   currentNoteContent: (key: string) => string
-  requestNotes: () => void
 }

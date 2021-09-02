@@ -46,11 +46,13 @@ export default defineComponent({
       getCurrentNoteContent()
       showRendered.value = true
     })
+
     watch(content, current => (renderedContent.value = markdown.toHtml(current)))
 
     window.ipc.on('save', () => window.ipc.send('save', content.value))
 
     const editor = ref<HTMLTextAreaElement | null>(null)
+
     return {
       content,
       renderedContent,

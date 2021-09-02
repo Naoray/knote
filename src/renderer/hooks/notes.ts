@@ -13,10 +13,8 @@ const createNotes = (): Notes => {
     currentNoteContent: (key: string): string => {
       const note = data.value.find(item => String(item.key) === key)!
 
+      if (!note) return ''
       return note.content
-    },
-    requestNotes: (): void => {
-      window.ipc.send('request-files')
     }
   }
 }

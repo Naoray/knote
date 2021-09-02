@@ -1,4 +1,5 @@
 import { Note } from '@/shared/types'
+import crypto from 'crypto'
 import { readdirSync, readFileSync, statSync } from 'original-fs'
 import { join } from 'path'
 
@@ -10,7 +11,7 @@ export default class Notes {
       const stats = statSync(filePath)
 
       return {
-        key: stats.birthtimeMs,
+        key: crypto.createHash('sha1').update(fileName).digest('hex'),
         datetime: stats.birthtime.toString(),
         content
       }

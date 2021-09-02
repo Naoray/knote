@@ -2,7 +2,6 @@ import { BrowserWindow } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import { join } from 'path'
 import { BrowserWindowConstructorOptions } from 'electron/main'
-import { App } from './app'
 
 export class Window {
   window: BrowserWindow

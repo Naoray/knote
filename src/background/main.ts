@@ -3,16 +3,14 @@
 import { dialog, ipcMain, protocol } from 'electron'
 import { App } from './app'
 import { writeFile } from 'original-fs'
-import { Note } from '@/shared/types'
 import Notes from './notes'
+import Project from './project'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } }
 ])
-
-let notes: Note[]
 
 const app = new App(isDevelopment)
 
@@ -22,12 +20,12 @@ app.onAppReady(() => {
   ipcMain.on('appLoaded', (event) => {
     if (!app.store.has('projectRoot')) return
 
-    notes = Notes.readFrom(app.store.get('projectRoot'))
-    event.reply('openProject', notes[0])
+    app.notes = Notes.readFrom(app.store.get('projectRoot'))
+    event.reply('openProject', app.notes[0])
   })
 
   ipcMain.on('request-files', (event) => {
-    event.reply('requested-files', notes)
+    event.reply('requested-files', app.notes)
   })
 
   ipcMain.on('save', (event, content) => {
@@ -49,20 +47,8 @@ app.onAppReady(() => {
   ipcMain.on('openProject', event => {
     if (!app.windowManager) return
 
-    const projectPath = dialog.showOpenDialogSync(app.windowManager.window, {
-      defaultPath: app.store.get('projectRoot'),
-      properties: ['openDirectory', 'createDirectory']
-    })
+    app.notes = Project.new(app)
 
-    if (projectPath === undefined) {
-      return
-    }
-
-    const selectedPath: string = projectPath[0]
-    app.store.set('projectRoot', selectedPath)
-
-    notes = Notes.readFrom(selectedPath)
-
-    event.reply('openProject', notes[0])
+    event.reply('openProject', app.notes[0])
   })
 })

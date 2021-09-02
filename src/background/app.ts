@@ -3,6 +3,7 @@ import { app, App as ElectronApp, BrowserWindow, ipcMain } from 'electron'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
 import ElectronStore from 'electron-store'
 import { serveMenu } from './menu'
+import { Note } from '@/shared/types'
 import { createWindowManager, Window } from './window'
 
 interface fn {
@@ -15,6 +16,7 @@ export class App {
   store: ElectronStore<Schema>
   windowManager?: Window
 
+  notes: Note[]
   onAppReadyCallbacks: fn[]
 
   constructor (isDevelopment: boolean) {
@@ -22,7 +24,14 @@ export class App {
     this.store = createStore()
     this.electron = app
 
+    this.notes = []
     this.onAppReadyCallbacks = []
+  }
+
+  send (channel: string, ...args: any[]): void {
+    if (!this.windowManager) return
+
+    this.windowManager.window.webContents.send(channel, ...args)
   }
 
   onAppReady (callback: fn): void {
@@ -40,7 +49,7 @@ export class App {
   serveMenu (): void {
     if (!this.windowManager) return
 
-    serveMenu(this.windowManager, this.store)
+    serveMenu(this)
   }
 
   boot (): void {

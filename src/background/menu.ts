@@ -1,19 +1,26 @@
-import { Schema } from '@/shared/store'
 import { Menu, MenuItem } from 'electron'
-import Store from 'electron-store'
-import { Window } from './window'
+import { App } from './app'
+import Project from './project'
 
-export const serveMenu = (windowManager: Window, store: Store<Schema>): void => {
+export const serveMenu = (app: App): void => {
   const template = [
     new MenuItem({
       role: 'fileMenu',
       submenu: [
-        { role: 'quit' },
+        {
+          label: 'Open Project',
+          click: () => {
+            app.notes = Project.new(app)
+            app.send('openProject', app.notes[0])
+          }
+        },
+        { type: 'separator' },
         {
           label: 'Save',
           accelerator: 'CommandOrControl+S',
-          click: () => windowManager.window.webContents.send('save')
-        }
+          click: () => app.send('save')
+        },
+        { role: 'quit' }
       ]
     }),
     new MenuItem({ role: 'editMenu' }),
@@ -26,11 +33,12 @@ export const serveMenu = (windowManager: Window, store: Store<Schema>): void => 
             {
               label: 'Always Show Menu Bar',
               type: 'checkbox',
-              checked: !store.get('menuIsAlwaysHidden'),
+              checked: !app.store.get('menuIsAlwaysHidden'),
               click: (menuItem) => {
-                windowManager.window.setAutoHideMenuBar(!menuItem.checked)
-                windowManager.window.setMenuBarVisibility(menuItem.checked)
-                store.set('menuIsAlwaysHidden', !menuItem.checked)
+                if (!app.windowManager) return
+                app.windowManager.window.setAutoHideMenuBar(!menuItem.checked)
+                app.windowManager.window.setMenuBarVisibility(menuItem.checked)
+                app.store.set('menuIsAlwaysHidden', !menuItem.checked)
               }
             },
             {
@@ -38,7 +46,7 @@ export const serveMenu = (windowManager: Window, store: Store<Schema>): void => 
               type: 'checkbox',
               checked: true,
               accelerator: 'CommandOrControl+B',
-              click: (menuItem) => windowManager.window.webContents.send('appearanceChange', { item: 'showSidebar', value: menuItem.checked })
+              click: (menuItem) => app.send('appearanceChange', { item: 'showSidebar', value: menuItem.checked })
             }
           ]
         },
@@ -48,7 +56,7 @@ export const serveMenu = (windowManager: Window, store: Store<Schema>): void => 
             {
               label: 'Show Rendered Markdown',
               accelerator: 'CommandOrControl+M',
-              click: () => windowManager.window.webContents.send('editorChange', { item: 'showRenderedMarkdown' })
+              click: () => app.send('editorChange', { item: 'showRenderedMarkdown' })
             }
           ]
         },

@@ -40,15 +40,6 @@
 </template>
 
 <script lang="ts" setup>
-import { Note } from '@/shared/types'
-import { useRouter } from 'vue-router'
-
-const router = useRouter()
-
-window.ipc.on('openProject', (note: Note) => {
-  router.push({ name: 'NoteEditor', params: { note: note.key } })
-})
-
 const openProject = () => {
   window.ipc.send('openProject')
 }
