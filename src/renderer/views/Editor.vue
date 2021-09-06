@@ -15,7 +15,6 @@ import { defineComponent, ref, watch } from 'vue'
 import FileList from '@components/FileList.vue'
 import MarkdownEditor from '@components/MarkdownEditor.vue'
 import { Splitpanes, Pane } from 'splitpanes'
-import { useNotes } from '../hooks/notes'
 
 import 'splitpanes/dist/splitpanes.css'
 import { useBroadcasts } from '../hooks/broadcasts'
@@ -26,7 +25,7 @@ export default defineComponent({
     FileList,
     MarkdownEditor,
     Splitpanes,
-    Pane
+    Pane,
   },
   setup () {
     const { appearance } = useBroadcasts()!
@@ -38,9 +37,9 @@ export default defineComponent({
     })
 
     return {
-      showSidebar
+      showSidebar,
     }
-  }
+  },
 })
 </script>
 

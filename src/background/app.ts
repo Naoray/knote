@@ -1,5 +1,5 @@
 import { createStore, Schema } from '@/shared/store'
-import { app, App as ElectronApp, BrowserWindow, ipcMain } from 'electron'
+import { app, App as ElectronApp, BrowserWindow } from 'electron'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
 import ElectronStore from 'electron-store'
 import { serveMenu } from './menu'
@@ -7,7 +7,7 @@ import { Note } from '@/shared/types'
 import { createWindowManager, Window } from './window'
 
 interface fn {
-  (): void;
+  (): void
 }
 
 export class App {
@@ -29,26 +29,22 @@ export class App {
   }
 
   send (channel: string, ...args: any[]): void {
-    if (!this.windowManager) return
-
-    this.windowManager.window.webContents.send(channel, ...args)
+    this.windowManager?.window.webContents.send(channel, ...args)
   }
 
   onAppReady (callback: fn): void {
     this.onAppReadyCallbacks.push(callback)
   }
 
-  setupWindow (): void {
-    this.windowManager = createWindowManager({
+  async setupWindow (): Promise<void> {
+    this.windowManager = await createWindowManager({
       minWidth: 1200,
       minHeight: 800,
-      autoHideMenuBar: this.store.get('menuIsAlwaysHidden')
+      autoHideMenuBar: this.store.get('menuIsAlwaysHidden'),
     })
   }
 
   serveMenu (): void {
-    if (!this.windowManager) return
-
     serveMenu(this)
   }
 
@@ -58,7 +54,7 @@ export class App {
     // Exit cleanly on request from parent process in development mode.
     if (this.isDevelopment) {
       if (process.platform === 'win32') {
-        process.on('message', data => {
+        process.on('message', (data) => {
           if (data === 'graceful-exit') {
             app.quit()
           }
@@ -71,9 +67,9 @@ export class App {
     }
   }
 
-  enableAppListener ():void {
+  enableAppListener (): void {
     this.electron.on('ready', () => {
-      this.onAppReadyCallbacks.forEach(callback => (callback()))
+      this.onAppReadyCallbacks.forEach((callback) => callback())
     })
 
     // Quit when all windows are closed.
@@ -85,10 +81,10 @@ export class App {
       }
     })
 
-    this.electron.on('activate', () => {
+    this.electron.on('activate', async () => {
       // On macOS it's common to re-create a window in the app when the
       // dock icon is clicked and there are no other windows open.
-      if (BrowserWindow.getAllWindows().length === 0) this.setupWindow()
+      if (BrowserWindow.getAllWindows().length === 0) await this.setupWindow()
     })
 
     // This method will be called when Electron has finished
@@ -97,14 +93,12 @@ export class App {
     app.on('ready', async () => {
       if (this.isDevelopment && !process.env.IS_TEST) {
         // Install Vue Devtools
-        try {
-          await installExtension(VUEJS3_DEVTOOLS)
-        } catch (e) {
-          console.error('Vue Devtools failed to install:', e.toString())
-        }
+        await installExtension(VUEJS3_DEVTOOLS).catch((e) =>
+          console.error('Vue Devtools failed to install:', e.toString()),
+        )
       }
 
-      this.setupWindow()
+      await this.setupWindow()
       this.serveMenu()
     })
   }

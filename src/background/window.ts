@@ -12,12 +12,11 @@ export class Window {
       webPreferences: {
         // Use pluginOptions.nodeIntegration, leave this alone
         // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
-        nodeIntegration: (process.env
-          .ELECTRON_NODE_INTEGRATION as unknown) as boolean,
+        nodeIntegration: (process.env.ELECTRON_NODE_INTEGRATION as unknown) as boolean,
         contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
         preload: join(__dirname, 'preload.js'),
-        spellcheck: false
-      }
+        spellcheck: false,
+      },
     })
   }
 
@@ -34,14 +33,8 @@ export class Window {
   }
 }
 
-export const createWindowManager = (options: BrowserWindowConstructorOptions): Window => {
+export const createWindowManager = async (options: BrowserWindowConstructorOptions): Promise<Window> => {
   const manager = new Window(options)
-
-  const laodWindow = async () => {
-    await manager.load()
-  }
-
-  laodWindow()
-
+  await manager.load()
   return manager
 }

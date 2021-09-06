@@ -12,16 +12,16 @@ export const serveMenu = (app: App): void => {
           click: () => {
             app.notes = Project.new(app)
             app.send('openProject', app.notes[0])
-          }
+          },
         },
         { type: 'separator' },
         {
           label: 'Save',
           accelerator: 'CommandOrControl+S',
-          click: () => app.send('save')
+          click: () => app.send('save'),
         },
-        { role: 'quit' }
-      ]
+        { role: 'quit' },
+      ],
     }),
     new MenuItem({ role: 'editMenu' }),
     new MenuItem({
@@ -35,20 +35,19 @@ export const serveMenu = (app: App): void => {
               type: 'checkbox',
               checked: !app.store.get('menuIsAlwaysHidden'),
               click: (menuItem) => {
-                if (!app.windowManager) return
-                app.windowManager.window.setAutoHideMenuBar(!menuItem.checked)
-                app.windowManager.window.setMenuBarVisibility(menuItem.checked)
+                app.windowManager?.window.setAutoHideMenuBar(!menuItem.checked)
+                app.windowManager?.window.setMenuBarVisibility(menuItem.checked)
                 app.store.set('menuIsAlwaysHidden', !menuItem.checked)
-              }
+              },
             },
             {
               label: 'Show Side Bar',
               type: 'checkbox',
               checked: true,
               accelerator: 'CommandOrControl+B',
-              click: (menuItem) => app.send('appearanceChange', { item: 'showSidebar', value: menuItem.checked })
-            }
-          ]
+              click: (menuItem) => app.send('appearanceChange', { item: 'showSidebar', value: menuItem.checked }),
+            },
+          ],
         },
         {
           label: 'Editor',
@@ -56,9 +55,9 @@ export const serveMenu = (app: App): void => {
             {
               label: 'Show Rendered Markdown',
               accelerator: 'CommandOrControl+M',
-              click: () => app.send('editorChange', { item: 'showRenderedMarkdown' })
-            }
-          ]
+              click: () => app.send('editorChange', { item: 'showRenderedMarkdown' }),
+            },
+          ],
         },
         { type: 'separator' },
         { role: 'zoomIn' },
@@ -68,9 +67,9 @@ export const serveMenu = (app: App): void => {
         { type: 'separator' },
         { role: 'reload' },
         { role: 'forceReload' },
-        { role: 'toggleDevTools' }
-      ]
-    })
+        { role: 'toggleDevTools' },
+      ],
+    }),
   ]
 
   const menu = Menu.buildFromTemplate(template)

@@ -1,32 +1,23 @@
 import { App, inject, reactive, UnwrapRef } from 'vue'
-
-type BroadcastEditorOptions = 'showRenderedMarkdown'
-
 export interface BroadcastEditorObject {
-  item: BroadcastEditorOptions
+  item: 'showRenderedMarkdown'
 }
 
-type AppearanceOptions = 'showSidebar'
-
 export interface BroadcastAppearanceObject {
-  item: AppearanceOptions
+  item: 'showSidebar'
   value: boolean
 }
 
 export interface Broadcasts {
-  editor: UnwrapRef<{
-    showRenderedMarkdown: boolean
-  }>,
-  appearance: UnwrapRef<{
-    showSidebar: boolean
-  }>
+  editor: UnwrapRef<{ showRenderedMarkdown: boolean }>
+  appearance: UnwrapRef<{ showSidebar: boolean }>
 }
 
 const broadcastSymbol = Symbol('broadcast')
 
-const createBroadcasts = () : Broadcasts => {
+const createBroadcasts = (): Broadcasts => {
   const editor = reactive({
-    showRenderedMarkdown: false
+    showRenderedMarkdown: false,
   })
 
   window.ipc.on('editorChange', ({ item }: BroadcastEditorObject) => {
@@ -34,7 +25,7 @@ const createBroadcasts = () : Broadcasts => {
   })
 
   const appearance = reactive({
-    showSidebar: true
+    showSidebar: true,
   })
 
   window.ipc.on('appearanceChange', ({ item, value }: BroadcastAppearanceObject) => {
@@ -43,7 +34,7 @@ const createBroadcasts = () : Broadcasts => {
 
   return {
     editor,
-    appearance
+    appearance,
   }
 }
 

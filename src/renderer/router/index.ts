@@ -1,24 +1,22 @@
 import { Note } from '@/shared/types'
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
-import Editor from '../views/Editor.vue'
-import Start from '../views/Start.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     name: 'Home',
-    component: Start
+    component: () => import('../views/Start.vue'),
   },
   {
     path: '/notes/:note',
     name: 'NoteEditor',
-    component: Editor
-  }
+    component: () => import('../views/Editor.vue'),
+  },
 ]
 
 const router = createRouter({
   history: createWebHashHistory(),
-  routes
+  routes,
 })
 
 window.ipc.on('openProject', (note: Note) => {
