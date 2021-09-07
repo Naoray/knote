@@ -17,7 +17,8 @@ module.exports = {
     'no-unused-expressions': 'off',
     '@typescript-eslint/no-unused-expressions': 'error',
     '@typescript-eslint/no-non-null-assertion': 'off',
-    'comma-dangle': ['error', {
+    'space-before-function-paren': 'off',
+    'comma-dangle': ['warn', {
       arrays: 'always-multiline',
       objects: 'always-multiline',
       imports: 'always-multiline',

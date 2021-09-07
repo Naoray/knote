@@ -1,9 +1,9 @@
 <template>
-  <Splitpanes class="flex max-h-screen min-h-screen">
-    <Pane v-if="showSidebar" size="33" class="flex min-h-screen overflow-y-auto ">
+  <Splitpanes class="flex max-h-screen min-h-screen overflow-y-hidden">
+    <Pane v-if="showSidebar" size="33" class="flex min-h-screen">
       <FileList class="flex-1 w-full"/>
     </Pane>
-    <Pane size="70" class="flex min-h-screen py-8 overflow-y-auto">
+    <Pane size="70" class="flex min-h-screen py-8">
       <MarkdownEditor class="flex-1 w-full mx-10"/>
     </Pane>
   </Splitpanes>
@@ -44,7 +44,10 @@ export default defineComponent({
 </script>
 
 <style lang="postcss">
-  .splitpanes__splitter {
-    @apply border-2
-  }
-  </style>
+.splitpanes__pane {
+  @apply overflow-y-auto h-auto
+}
+.splitpanes__splitter {
+  @apply border-2
+}
+</style>

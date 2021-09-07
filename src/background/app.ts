@@ -5,6 +5,8 @@ import ElectronStore from 'electron-store'
 import { serveMenu } from './menu'
 import { Note } from '@/shared/types'
 import { createWindowManager, Window } from './window'
+import Notes from './notes'
+import Project from './project'
 
 interface fn {
   (): void
@@ -19,7 +21,7 @@ export class App {
   notes: Note[]
   onAppReadyCallbacks: fn[]
 
-  constructor (isDevelopment: boolean) {
+  constructor(isDevelopment: boolean) {
     this.isDevelopment = isDevelopment
     this.store = createStore()
     this.electron = app
@@ -28,15 +30,16 @@ export class App {
     this.onAppReadyCallbacks = []
   }
 
-  send (channel: string, ...args: any[]): void {
-    this.windowManager?.window.webContents.send(channel, ...args)
+  send(channel: string, ...args: any[]): void {
+    if (!this.windowManager) return
+    this.windowManager.window.webContents.send(channel, ...args)
   }
 
-  onAppReady (callback: fn): void {
+  onAppReady(callback: fn): void {
     this.onAppReadyCallbacks.push(callback)
   }
 
-  async setupWindow (): Promise<void> {
+  async setupWindow(): Promise<void> {
     this.windowManager = await createWindowManager({
       minWidth: 1200,
       minHeight: 800,
@@ -44,11 +47,11 @@ export class App {
     })
   }
 
-  serveMenu (): void {
+  serveMenu(): void {
     serveMenu(this)
   }
 
-  boot (): void {
+  boot(): void {
     this.enableAppListener()
 
     // Exit cleanly on request from parent process in development mode.
@@ -67,7 +70,7 @@ export class App {
     }
   }
 
-  enableAppListener (): void {
+  enableAppListener(): void {
     this.electron.on('ready', () => {
       this.onAppReadyCallbacks.forEach((callback) => callback())
     })

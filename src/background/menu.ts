@@ -35,8 +35,9 @@ export const serveMenu = (app: App): void => {
               type: 'checkbox',
               checked: !app.store.get('menuIsAlwaysHidden'),
               click: (menuItem) => {
-                app.windowManager?.window.setAutoHideMenuBar(!menuItem.checked)
-                app.windowManager?.window.setMenuBarVisibility(menuItem.checked)
+                if (!app.windowManager) return
+                app.windowManager.window.setAutoHideMenuBar(!menuItem.checked)
+                app.windowManager.window.setMenuBarVisibility(menuItem.checked)
                 app.store.set('menuIsAlwaysHidden', !menuItem.checked)
               },
             },

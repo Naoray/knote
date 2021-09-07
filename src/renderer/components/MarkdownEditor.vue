@@ -10,35 +10,30 @@ import { defineComponent, nextTick, ref, watch } from 'vue'
 
 import { useNotes } from '../hooks/notes'
 import { useRoute } from 'vue-router'
-import { createMarkdown } from '@/shared/markdown'
 import { useBroadcasts } from '../hooks/broadcasts'
+import { useMarkdown } from '../hooks/markdown'
 
 export default defineComponent({
   setup () {
     const { editor: editorBroadcast } = useBroadcasts()!
+    const { toHtml } = useMarkdown()!
 
     const showRendered = ref(true)
     watch(editorBroadcast, values => (showRendered.value = values.showRenderedMarkdown))
 
-    const markdown = createMarkdown('commonmark', {
-      html: true,
-      linkify: true,
-      breaks: true,
-      typographer: true
-    })
-
     const content = ref('')
     const renderedContent = ref('')
 
-    const { currentNoteContent } = useNotes()!
+    const { currentNoteContent, data } = useNotes()!
     const route = useRoute()
 
     const getCurrentNoteContent = () => {
       content.value = currentNoteContent(String(route.params.note))
-      renderedContent.value = markdown.toHtml(content.value)
+      renderedContent.value = toHtml(content.value)
     }
 
     // set first file content on initial load
+    watch(data, getCurrentNoteContent)
     window.ipc.on('requested-files', getCurrentNoteContent)
 
     // set new file content on note change
@@ -47,7 +42,7 @@ export default defineComponent({
       showRendered.value = true
     })
 
-    watch(content, current => (renderedContent.value = markdown.toHtml(current)))
+    watch(content, current => (renderedContent.value = toHtml(current)))
 
     window.ipc.on('save', () => window.ipc.send('save', content.value))
 
@@ -65,8 +60,8 @@ export default defineComponent({
 
           editor.value.focus()
         })
-      }
+      },
     }
-  }
+  },
 })
 </script>
