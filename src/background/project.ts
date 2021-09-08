@@ -4,12 +4,12 @@ import { App } from './app'
 import Notes from './notes'
 
 export default class Project {
-  static new (app: App): Note[] {
+  static make(app: App): Note[] {
     if (!app.windowManager) return []
 
     const projectPath = dialog.showOpenDialogSync(app.windowManager.window, {
       defaultPath: app.store.get('projectRoot'),
-      properties: ['openDirectory', 'createDirectory']
+      properties: ['openDirectory', 'createDirectory'],
     })
 
     if (projectPath === undefined) {

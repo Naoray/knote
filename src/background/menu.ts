@@ -1,6 +1,7 @@
 import { Menu, MenuItem } from 'electron'
 import { App } from './app'
 import Project from './project'
+import Notes from './notes'
 
 export const serveMenu = (app: App): void => {
   const template = [
@@ -8,9 +9,20 @@ export const serveMenu = (app: App): void => {
       role: 'fileMenu',
       submenu: [
         {
+          label: 'New Note',
+          accelerator: 'CommandOrControl+N',
+          click: () => {
+            const newNote = Notes.make('', new Date().toString())
+            app.notes.push(newNote)
+            app.send('requested-files', app.notes)
+            app.send('newNote', newNote)
+          },
+        },
+        { type: 'separator' },
+        {
           label: 'Open Project',
           click: () => {
-            app.notes = Project.new(app)
+            app.notes = Project.make(app)
             app.send('openProject', app.notes[0])
           },
         },

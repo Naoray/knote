@@ -2,12 +2,9 @@ import { createStore, Schema } from '@/shared/store'
 import { app, App as ElectronApp, BrowserWindow } from 'electron'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
 import ElectronStore from 'electron-store'
-import { serveMenu } from './menu'
+import { serveMenu as setupMenu } from './menu'
 import { Note } from '@/shared/types'
 import { createWindowManager, Window } from './window'
-import Notes from './notes'
-import Project from './project'
-
 interface fn {
   (): void
 }
@@ -20,6 +17,7 @@ export class App {
 
   notes: Note[]
   onAppReadyCallbacks: fn[]
+  onWindowManagerCallbacks: fn[]
 
   constructor(isDevelopment: boolean) {
     this.isDevelopment = isDevelopment
@@ -28,6 +26,7 @@ export class App {
 
     this.notes = []
     this.onAppReadyCallbacks = []
+    this.onWindowManagerCallbacks = []
   }
 
   send(channel: string, ...args: any[]): void {
@@ -39,16 +38,22 @@ export class App {
     this.onAppReadyCallbacks.push(callback)
   }
 
+  onWindowManagerReady(callback: fn): void {
+    this.onWindowManagerCallbacks.push(callback)
+  }
+
   async setupWindow(): Promise<void> {
     this.windowManager = await createWindowManager({
       minWidth: 1200,
       minHeight: 800,
       autoHideMenuBar: this.store.get('menuIsAlwaysHidden'),
     })
+
+    this.onWindowManagerCallbacks.forEach((callback) => callback())
   }
 
   serveMenu(): void {
-    serveMenu(this)
+    setupMenu(this)
   }
 
   boot(): void {

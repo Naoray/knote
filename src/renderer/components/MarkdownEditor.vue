@@ -9,9 +9,10 @@
 import { defineComponent, nextTick, ref, watch } from 'vue'
 
 import { useNotes } from '../hooks/notes'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useBroadcasts } from '../hooks/broadcasts'
 import { useMarkdown } from '../hooks/markdown'
+import { Note } from '@/shared/types'
 
 export default defineComponent({
   setup () {
@@ -24,8 +25,9 @@ export default defineComponent({
     const content = ref('')
     const renderedContent = ref('')
 
-    const { currentNoteContent, data } = useNotes()!
+    const { currentNoteContent, data, currentNote } = useNotes()!
     const route = useRoute()
+    const router = useRouter()
 
     const getCurrentNoteContent = () => {
       content.value = currentNoteContent(String(route.params.note))
@@ -42,11 +44,25 @@ export default defineComponent({
       showRendered.value = true
     })
 
-    watch(content, current => (renderedContent.value = toHtml(current)))
+    watch(content, current => {
+      const note = currentNote(String(route.params.note))
+      note.content = current
+      renderedContent.value = toHtml(current)
+    })
 
-    window.ipc.on('save', () => window.ipc.send('save', content.value))
+    window.ipc.on('save', () => {
+      const note = currentNote(String(route.params.note))
+      window.ipc.send('save', {
+        content: note.content,
+        fileName: note.fileName,
+      })
+    })
 
     const editor = ref<HTMLTextAreaElement | null>(null)
+    window.ipc.on('newNote', (newNote: Note) => {
+      router.push({ name: 'NoteEditor', params: { note: newNote.key } })
+      nextTick(() => editor.value?.focus())
+    })
 
     return {
       content,

@@ -8,14 +8,17 @@ const createNotes = (): Notes => {
 
   window.ipc.on('requested-files', (notes: Note[]) => (data.value = notes))
 
+  const currentNote = (key: string): Note => data.value.find((item) => String(item.key) === key)!
+
   return {
     data,
+    currentNote,
     currentNoteContent: (key: string): string => {
-      const note = data.value.find(item => String(item.key) === key)!
+      const note = currentNote(key)
 
       if (!note) return ''
       return note.content
-    }
+    },
   }
 }
 

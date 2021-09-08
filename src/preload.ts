@@ -8,15 +8,16 @@ const validChannels = [
   'editorChange',
   'appearanceChange',
   'appLoaded',
+  'newNote',
 ]
 
 contextBridge.exposeInMainWorld('ipc', {
-  send: (channel: string, data?: string) => {
+  send: (channel: string, ...arg: Array<any>) => {
     if (validChannels.includes(channel)) {
-      ipcRenderer.send(channel, data)
+      ipcRenderer.send(channel, ...arg)
     }
   },
-  on: (channel: string, func: (...arg: Array<string>) => void) => {
+  on: (channel: string, func: (...arg: Array<any>) => void) => {
     if (validChannels.includes(channel)) {
       // Strip event as it includes `sender` and is a security risk
       ipcRenderer.on(channel, (event, ...args: Array<string>) => func(...args))
