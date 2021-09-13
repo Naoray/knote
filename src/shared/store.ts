@@ -9,7 +9,7 @@ export const createStore = (): Store<Schema> => {
   return new Store<Schema>({
     defaults: {
       projectRoot: '~/',
-      menuIsAlwaysHidden: false
-    }
+      menuIsAlwaysHidden: false,
+    },
   })
 }

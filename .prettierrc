@@ -7,5 +7,5 @@
   "bracketSpacing": true,
   "printWidth": 120,
   "trailingComma": "es5",
-  "quoteProps": "consistent",
+  "quoteProps": "consistent"
 }

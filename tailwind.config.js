@@ -2,13 +2,13 @@ module.exports = {
   purge: { content: ['./public/**/*.html', './src/**/*.vue'] },
   darkMode: false, // or 'media' or 'class'
   theme: {
-    extend: {}
+    extend: {},
   },
   variants: {
-    extend: {}
+    extend: {},
   },
   plugins: [
     require('@tailwindcss/typography'),
-    require('@tailwindcss/line-clamp')
-  ]
+    require('@tailwindcss/line-clamp'),
+  ],
 }

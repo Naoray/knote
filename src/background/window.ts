@@ -2,11 +2,12 @@ import { BrowserWindow } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import { join } from 'path'
 import { BrowserWindowConstructorOptions } from 'electron/main'
+import { autoUpdater } from 'electron-updater'
 
 export class Window {
   window: BrowserWindow
 
-  constructor (options: BrowserWindowConstructorOptions) {
+  constructor(options: BrowserWindowConstructorOptions) {
     this.window = new BrowserWindow({
       ...options,
       webPreferences: {
@@ -20,7 +21,7 @@ export class Window {
     })
   }
 
-  async load (): Promise<void> {
+  async load(): Promise<void> {
     if (process.env.WEBPACK_DEV_SERVER_URL) {
       // Load the url of the dev server if in development mode
       await this.window.loadURL(process.env.WEBPACK_DEV_SERVER_URL as string)
@@ -29,6 +30,8 @@ export class Window {
       createProtocol('app')
       // Load the index.html when not in development
       this.window.loadURL('app://./index.html')
+
+      autoUpdater.checkForUpdatesAndNotify()
     }
   }
 }

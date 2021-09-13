@@ -23,7 +23,7 @@ export const createCount = (): CountState => {
     double: computed(() => count.value * 2),
     set: (value: number) => (count.value = value),
     increment: () => count.value++,
-    decrement: () => count.value--
+    decrement: () => count.value--,
   }
 }
 

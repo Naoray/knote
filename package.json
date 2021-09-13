@@ -2,11 +2,23 @@
   "name": "knote",
   "version": "0.1.0",
   "private": true,
+  "description": "A simple notes taking app",
+  "author": {
+    "email": "krishan.koenig@googlemail.com",
+    "name": "Krishan Koenig"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Naoray/knote"
+  },
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "electron:build": "vue-cli-service electron:build",
+    "publish:linux": "vue-cli-service electron:build -p always  --linux",
+    "build:linux": "vue-cli-service electron:build -p never  --linux",
+    "build:win": "vue-cli-service electron:build -p never --win",
+    "build:osx": "vue-cli-service electron:build -p never --mac",
     "electron:serve": "vue-cli-service electron:serve",
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps"
@@ -19,6 +31,8 @@
     "autoprefixer": "^9",
     "core-js": "^3.6.5",
     "electron-store": "^8.0.0",
+    "electron-updater": "^4.3.9",
+    "fuse.js": "^6.4.6",
     "markdown-it": "^12.2.0",
     "postcss": "^7",
     "splitpanes": "^3.0.6",
@@ -50,7 +64,7 @@
     "eslint-plugin-vue": "^7.0.0",
     "lint-staged": "^9.5.0",
     "typescript": "~4.1.5",
-    "vue-cli-plugin-electron-builder": "~2.1.1",
+    "vue-cli-plugin-electron-builder": "^2.1.1",
     "vue-cli-plugin-tailwind": "~2.0.6"
   },
   "gitHooks": {
