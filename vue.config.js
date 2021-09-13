@@ -1,9 +1,4 @@
 module.exports = {
-  pages: {
-    index: {
-      entry: 'src/renderer/main.ts',
-    },
-  },
   configureWebpack: {
     resolve: {
       alias: {
@@ -20,6 +15,9 @@ module.exports = {
       removeElectronJunk: false,
       builderOptions: {
         publish: ['github'],
+        linux: {
+          target: ['AppImage', 'deb'],
+        },
       },
     },
   },
