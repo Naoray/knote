@@ -35,8 +35,7 @@ export default defineComponent({
     }
 
     // set first file content on initial load
-    watch(data, getCurrentNoteContent)
-    window.ipc.on('requested-files', getCurrentNoteContent)
+    getCurrentNoteContent()
 
     // set new file content on note change
     watch(() => route.params.note, () => {

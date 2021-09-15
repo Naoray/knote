@@ -21,6 +21,7 @@ const router = createRouter({
 
 window.ipc.on('openProject', (note: Note) => {
   window.ipc.send('request-files')
+
   router.push({ name: 'NoteEditor', params: { note: note.key } })
 })
 
