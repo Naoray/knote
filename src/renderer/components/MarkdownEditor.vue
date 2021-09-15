@@ -37,6 +37,9 @@ export default defineComponent({
     // set first file content on initial load
     getCurrentNoteContent()
 
+    // set content on project change
+    watch(data, getCurrentNoteContent)
+
     // set new file content on note change
     watch(() => route.params.note, () => {
       getCurrentNoteContent()
@@ -45,6 +48,7 @@ export default defineComponent({
 
     watch(content, current => {
       const note = currentNote(String(route.params.note))
+      if (note === undefined) return
       note.content = current
       renderedContent.value = toHtml(current)
     })

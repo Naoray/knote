@@ -17,7 +17,7 @@ export default class Notes {
   }
 
   static readFrom(path: string): Note[] | [] {
-    return readdirSync(path).map(
+    const notes = readdirSync(path).map(
       (fileName): Note => {
         const filePath = join(path, fileName)
         const content = readFileSync(filePath).toString()
@@ -26,5 +26,7 @@ export default class Notes {
         return this.make(fileName, stats.birthtime.toString(), content)
       },
     )
+
+    return notes.length ? notes : [Notes.make('', new Date().toString())]
   }
 }
