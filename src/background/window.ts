@@ -2,7 +2,7 @@ import { BrowserWindow } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import { join } from 'path'
 import { BrowserWindowConstructorOptions } from 'electron/main'
-import { autoUpdater } from 'electron-updater'
+import { autoUpdater, UpdateCheckResult } from 'electron-updater'
 
 export class Window {
   window: BrowserWindow
@@ -30,8 +30,10 @@ export class Window {
       createProtocol('app')
       // Load the index.html when not in development
       this.window.loadURL('app://./index.html')
-
-      autoUpdater.checkForUpdatesAndNotify()
+      autoUpdater.checkForUpdatesAndNotify().then((result) => {
+        if (!result) return
+        console.log(result?.updateInfo.version)
+      })
     }
   }
 }
