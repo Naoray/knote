@@ -2,6 +2,7 @@ import { Menu, MenuItem } from 'electron'
 import { App } from './app'
 import Project from './project'
 import Notes from './notes'
+import { autoUpdater } from 'electron-updater'
 
 export const serveMenu = (app: App): void => {
   const template = [
@@ -81,6 +82,17 @@ export const serveMenu = (app: App): void => {
         { role: 'reload' },
         { role: 'forceReload' },
         { role: 'toggleDevTools' },
+      ],
+    }),
+    new MenuItem({
+      label: 'About',
+      submenu: [
+        {
+          label: 'Check for Updates',
+          click: () => {
+            autoUpdater.checkForUpdatesAndNotify().then(console.log)
+          },
+        },
       ],
     }),
   ]
