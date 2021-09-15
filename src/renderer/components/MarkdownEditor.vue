@@ -1,7 +1,7 @@
 <template>
-  <div class="flex">
-    <textarea v-if="!showRendered" ref="editor" class="flex-1 prose max-w-none focus:outline-none" v-model="content"></textarea>
-    <div v-else @click="focusOnEditor" class="flex-1 prose-sm prose lg:prose xl:prose-lg focus:outline-none max-w-none" v-html="renderedContent"></div>
+  <div class="flex justify-center">
+    <textarea v-if="!showRendered" ref="editor" class="flex-1 prose xl:prose-lg xl:max-w-5xl focus:outline-none" v-model="content"></textarea>
+    <div v-else @click="focusOnEditor" class="flex-1 prose-sm prose lg:prose xl:prose-lg xl:max-w-5xl focus:outline-none" v-html="renderedContent"></div>
   </div>
 </template>
 
@@ -20,7 +20,7 @@ export default defineComponent({
     const { toHtml } = useMarkdown()!
 
     const showRendered = ref(true)
-    watch(editorBroadcast, values => (showRendered.value = values.showRenderedMarkdown))
+    watch(editorBroadcast, () => (showRendered.value = !showRendered.value))
 
     const content = ref('')
     const renderedContent = ref('')
