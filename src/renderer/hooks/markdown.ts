@@ -10,7 +10,7 @@ interface MarkdownData {
 }
 
 const createMarkdownData = (): MarkdownData => {
-  const markdown = createMarkdown('commonmark', {
+  const markdown = createMarkdown('default', {
     html: true,
     linkify: true,
     breaks: true,

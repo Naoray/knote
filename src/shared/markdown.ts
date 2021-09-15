@@ -3,7 +3,7 @@ import MarkdownIt, { Options, PresetName } from 'markdown-it'
 class Markdown {
   private markdownIt: MarkdownIt
 
-  constructor(preset: PresetName, options?: Options) {
+  constructor(preset: PresetName = 'default', options?: Options) {
     this.markdownIt = new MarkdownIt(preset, options)
   }
 
