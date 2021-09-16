@@ -90,60 +90,7 @@ export const serveMenu = (app: App): void => {
       submenu: [
         {
           label: 'Check for Updates',
-          click: () => {
-            autoUpdater.logger = logger
-            autoUpdater.allowPrerelease = true
-            autoUpdater.autoInstallOnAppQuit = false
-            autoUpdater.fullChangelog = true
-            autoUpdater.autoDownload = false
-
-            autoUpdater.on('checking-for-update', () => {
-              // your code here
-            })
-
-            autoUpdater.on('update-available', (info) => {
-              logger.info(info)
-              dialog
-                .showMessageBox({
-                  type: 'info',
-                  title: 'Found Updates',
-                  message: `New updates are available, do you want update to version ${info.releaseName} now?`,
-                  defaultId: 0,
-                  cancelId: 1,
-                  buttons: ['Yes', 'No'],
-                })
-                .then((result) => {
-                  if (result.response === 0) {
-                    autoUpdater.downloadUpdate()
-                  }
-                })
-            })
-
-            autoUpdater.on('update-not-available', (info) => {
-              dialog.showMessageBox({
-                title: 'No Updates',
-                message: `Current version (${autoUpdater.currentVersion}) is up-to-date.`,
-              })
-            })
-
-            autoUpdater.on('update-downloaded', (info) => {
-              dialog
-                .showMessageBox({
-                  title: 'Install Updates',
-                  message: 'Updates are ready to be installed.',
-                  defaultId: 0,
-                  cancelId: 1,
-                  buttons: ['Install and restart', 'Close'],
-                })
-                .then((result) => {
-                  if (result.response === 0) {
-                    setImmediate(() => autoUpdater.quitAndInstall())
-                  }
-                })
-            })
-
-            autoUpdater.checkForUpdates()
-          },
+          click: () => app.updater.checkForUpdates(true),
         },
       ],
     }),
