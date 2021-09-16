@@ -45,5 +45,5 @@ jobs:
       - name: retry action
         uses: Wandalen/wretry.action@0.2.7
         with:
-          action: 'build'
+          action: 'Build/release'
 
