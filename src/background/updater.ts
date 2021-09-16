@@ -4,6 +4,7 @@ import { dialog } from 'electron'
 
 export default class AppUpdater {
   private updater: ElectronUpdater
+  manuallyTriggered = false
 
   constructor() {
     this.updater = autoUpdater
@@ -44,6 +45,7 @@ export default class AppUpdater {
     })
 
     autoUpdater.on('update-not-available', (info) => {
+      if (!this.manuallyTriggered) return
       dialog.showMessageBox({
         title: 'No Updates',
         message: `Current version (${autoUpdater.currentVersion}) is up-to-date.`,
@@ -67,7 +69,8 @@ export default class AppUpdater {
     })
   }
 
-  checkForUpdates() {
+  checkForUpdates(manuallyTriggered = false) {
+    this.manuallyTriggered = manuallyTriggered
     this.updater.checkForUpdates()
   }
 }
