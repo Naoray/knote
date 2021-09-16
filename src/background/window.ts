@@ -30,10 +30,6 @@ export class Window {
       createProtocol('app')
       // Load the index.html when not in development
       this.window.loadURL('app://./index.html')
-      autoUpdater.checkForUpdatesAndNotify().then((result) => {
-        if (!result) return
-        console.log(result.updateInfo.version)
-      })
     }
   }
 }

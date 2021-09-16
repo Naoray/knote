@@ -16,7 +16,7 @@ module.exports = {
       builderOptions: {
         publish: ['github'],
         linux: {
-          target: ['AppImage', 'deb'],
+          target: ['AppImage'],
         },
       },
     },

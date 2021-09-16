@@ -5,12 +5,14 @@ import ElectronStore from 'electron-store'
 import { serveMenu as setupMenu } from './menu'
 import { Note } from '@/shared/types'
 import { createWindowManager, Window } from './window'
+import AppUpdater from './updater'
 interface fn {
   (): void
 }
 
 export class App {
   electron: ElectronApp
+  updater: AppUpdater
   isDevelopment: boolean
   store: ElectronStore<Schema>
   windowManager?: Window
@@ -23,6 +25,7 @@ export class App {
     this.isDevelopment = isDevelopment
     this.store = createStore()
     this.electron = app
+    this.updater = new AppUpdater()
 
     this.notes = []
     this.onAppReadyCallbacks = []
@@ -48,6 +51,8 @@ export class App {
       minHeight: 800,
       autoHideMenuBar: this.store.get('menuIsAlwaysHidden'),
     })
+
+    this.updater.checkForUpdates()
 
     this.onWindowManagerCallbacks.forEach((callback) => callback())
   }
