@@ -54,7 +54,10 @@ export default defineComponent({
     })
 
     const presentModeEnabled = ref(false)
-    window.ipc.on('togglePresentMode', (enabled: boolean) => (presentModeEnabled.value = enabled))
+    window.ipc.on('togglePresentMode', (enabled: boolean) => {
+      presentModeEnabled.value = enabled
+      if (enabled) showRendered.value = true
+    })
 
     window.ipc.on('save', () => {
       const note = currentNote(String(route.params.note))
