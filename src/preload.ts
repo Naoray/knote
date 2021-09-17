@@ -9,6 +9,8 @@ const validChannels = [
   'appearanceChange',
   'appLoaded',
   'newNote',
+  'togglePresentMode',
+  'rendererReady',
 ]
 
 contextBridge.exposeInMainWorld('ipc', {

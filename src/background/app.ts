@@ -19,7 +19,6 @@ export class App {
 
   notes: Note[]
   onAppReadyCallbacks: fn[]
-  onWindowManagerCallbacks: fn[]
 
   constructor(isDevelopment: boolean) {
     this.isDevelopment = isDevelopment
@@ -29,7 +28,6 @@ export class App {
 
     this.notes = []
     this.onAppReadyCallbacks = []
-    this.onWindowManagerCallbacks = []
   }
 
   send(channel: string, ...args: any[]): void {
@@ -41,10 +39,6 @@ export class App {
     this.onAppReadyCallbacks.push(callback)
   }
 
-  onWindowManagerReady(callback: fn): void {
-    this.onWindowManagerCallbacks.push(callback)
-  }
-
   async setupWindow(): Promise<void> {
     this.windowManager = await createWindowManager({
       minWidth: 1200,
@@ -53,8 +47,6 @@ export class App {
     })
 
     this.updater.checkForUpdates()
-
-    this.onWindowManagerCallbacks.forEach((callback) => callback())
   }
 
   serveMenu(): void {

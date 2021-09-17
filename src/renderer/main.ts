@@ -13,3 +13,5 @@ createApp(App)
   .use(broadcasts)
   .use(markdown)
   .mount('#app')
+
+window.ipc.send('rendererReady')

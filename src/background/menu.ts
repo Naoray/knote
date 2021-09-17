@@ -42,6 +42,16 @@ export const serveMenu = (app: App): void => {
       role: 'viewMenu',
       submenu: [
         {
+          label: 'Enable Present Mode',
+          type: 'checkbox',
+          checked: false,
+          accelerator: 'CommandOrControl+P',
+          click: (menuItem) => {
+            if (!app.windowManager) return
+            app.send('togglePresentMode', menuItem.checked)
+          },
+        },
+        {
           label: 'Appearance',
           submenu: [
             {

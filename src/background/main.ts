@@ -6,6 +6,7 @@ import { writeFile } from 'original-fs'
 import { join } from 'path'
 import Project from './project'
 import Notes from './notes'
+import logger from 'electron-log'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 // Scheme must be registered before the app is ready
@@ -15,14 +16,14 @@ const app = new App(isDevelopment)
 
 app.boot()
 
-app.onWindowManagerReady(() => {
-  if (!app.store.has('projectRoot')) return
-
-  app.notes = Notes.readFrom(app.store.get('projectRoot'))
-  app.send('openProject', app.notes[0])
-})
-
 app.onAppReady(() => {
+  ipcMain.on('rendererReady', () => {
+    if (!app.store.has('projectRoot')) return
+
+    app.notes = Notes.readFrom(app.store.get('projectRoot'))
+    app.send('openProject', app.notes[0])
+  })
+
   ipcMain.on('request-files', (event) => {
     event.reply('requested-files', app.notes)
   })

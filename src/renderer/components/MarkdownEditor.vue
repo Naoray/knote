@@ -53,6 +53,9 @@ export default defineComponent({
       renderedContent.value = toHtml(current)
     })
 
+    const presentModeEnabled = ref(false)
+    window.ipc.on('togglePresentMode', (enabled: boolean) => (presentModeEnabled.value = enabled))
+
     window.ipc.on('save', () => {
       const note = currentNote(String(route.params.note))
       window.ipc.send('save', {
@@ -73,6 +76,7 @@ export default defineComponent({
       showRendered,
       editor,
       focusOnEditor: () => {
+        if (presentModeEnabled.value) return
         showRendered.value = false
         nextTick(() => {
           if (editor.value === null) return
