@@ -1,8 +1,8 @@
 <template>
   <div
-    class="flex flex-col items-center max-h-screen min-h-screen mt-32 space-y-8"
+    class="flex flex-col items-center max-h-screen min-h-screen space-y-8"
   >
-    <h2 class="text-5xl font-semibold leading-7 text-gray-900">
+    <h2 class="mt-32 text-5xl font-semibold leading-7 text-gray-900">
       Knote
     </h2>
     <!--<div class="relative z-10 max-w-md py-5 mx-auto">

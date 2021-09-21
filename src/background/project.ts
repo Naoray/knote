@@ -21,4 +21,9 @@ export default class Project {
 
     return Notes.readFrom(selectedPath)
   }
+
+  static load(app: App): void {
+    app.notes = Notes.readFrom(app.store.get('projectRoot'))
+    app.send('openProject', app.notes[0])
+  }
 }

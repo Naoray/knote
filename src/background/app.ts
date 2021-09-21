@@ -6,6 +6,7 @@ import { serveMenu as setupMenu } from './menu'
 import { Note } from '@/shared/types'
 import { createWindowManager, Window } from './window'
 import AppUpdater from './updater'
+import Project from './project'
 interface fn {
   (): void
 }
@@ -17,22 +18,28 @@ export class App {
   store: ElectronStore<Schema>
   windowManager?: Window
 
-  notes: Note[]
-  onAppReadyCallbacks: fn[]
+  rendererReady = false
+  windowReady = false
+
+  notes: Note[] = []
+  onAppReadyCallbacks: fn[] = []
 
   constructor(isDevelopment: boolean) {
     this.isDevelopment = isDevelopment
     this.store = createStore()
     this.electron = app
     this.updater = new AppUpdater()
-
-    this.notes = []
-    this.onAppReadyCallbacks = []
   }
 
   send(channel: string, ...args: any[]): void {
     if (!this.windowManager) return
     this.windowManager.window.webContents.send(channel, ...args)
+  }
+
+  loadLastProject(): void {
+    if (!this.windowReady || !this.rendererReady || !this.store.has('projectRoot')) return
+
+    Project.load(this)
   }
 
   onAppReady(callback: fn): void {
@@ -47,6 +54,8 @@ export class App {
     })
 
     this.updater.checkForUpdates()
+    this.windowReady = true
+    this.loadLastProject()
   }
 
   serveMenu(): void {
