@@ -1,15 +1,14 @@
 import { Note } from '@/shared/types'
-import crypto from 'crypto'
+import Crypto from 'crypto'
 import { readdirSync, readFileSync, statSync } from 'original-fs'
 import { join } from 'path'
 
 export default class Notes {
   static make(fileName: string, datetime: string, content = ''): Note {
     return {
-      key: crypto
-        .createHash('sha1')
-        .update(fileName)
-        .digest('hex'),
+      key: Crypto.randomBytes(32)
+        .toString('base64')
+        .slice(0, 32),
       datetime,
       content,
       fileName,
