@@ -19,11 +19,13 @@ export default class Project {
     const selectedPath: string = projectPath[0]
     app.store.set('projectRoot', selectedPath)
 
-    return Notes.readFrom(selectedPath)
+    return Notes.readFrom(selectedPath, true)
   }
 
   static load(app: App): void {
     app.notes = Notes.readFrom(app.store.get('projectRoot'))
+
+    if (app.notes.length === 0) return
     app.send('openProject', app.notes[0])
   }
 }

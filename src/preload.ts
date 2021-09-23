@@ -10,6 +10,8 @@ const validChannels = [
   'appearanceChange',
   'appLoaded',
   'newNote',
+  'removeNote',
+  'removedNote',
   'togglePresentMode',
   'rendererReady',
 ]

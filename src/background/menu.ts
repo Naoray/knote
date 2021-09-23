@@ -1,4 +1,4 @@
-import { Menu, MenuItem } from 'electron'
+import { dialog, Menu, MenuItem } from 'electron'
 import { App } from './app'
 import Project from './project'
 import Notes from './notes'
@@ -17,27 +17,23 @@ export const serveMenu = (app: App): void => {
             app.send('newNote', newNote)
           },
         },
-        // {
-        //   label: 'Delete Note',
-        //   accelerator: 'CommandOrControl+Delete',
-        //   click: () => {
-        //     dialog
-        //       .showMessageBox({
-        //         title: 'Delete Note',
-        //         message: 'Do you really want to delete the current selected note?',
-        //         defaultId: 0,
-        //         cancelId: 1,
-        //         buttons: ['Yes, I do', 'Nope'],
-        //       })
-        //       .then((result) => {
-        //         if (result.response === 0) {
-        //           app.notes.push(newNote)
-        //           app.send('requested-files', app.notes)
-        //           app.send('newNote', newNote)
-        //         }
-        //       })
-        //   },
-        // },
+        {
+          label: 'Delete Note',
+          accelerator: 'CommandOrControl+Delete',
+          click: () => {
+            dialog
+              .showMessageBox({
+                title: 'Delete Note',
+                message: 'Do you really want to delete the current selected note?',
+                defaultId: 0,
+                cancelId: 1,
+                buttons: ['Yes, I do', 'Nope'],
+              })
+              .then((result) => {
+                if (result.response === 0) app.send('removeNote')
+              })
+          },
+        },
         { type: 'separator' },
         {
           label: 'Open Project',

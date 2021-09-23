@@ -11,4 +11,5 @@ export interface Notes {
   data: Ref<Note[]>
   currentNote: (key: string) => Note
   currentNoteContent: (key: string) => string
+  removeNote: (key: string) => void
 }

@@ -26,6 +26,9 @@ const createNotes = (): Notes => {
       if (!note) return ''
       return note.content
     },
+    removeNote: (key: string): void => {
+      data.value = data.value.filter((item) => item.key !== key)
+    },
   }
 }
 

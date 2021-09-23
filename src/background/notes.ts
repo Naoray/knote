@@ -15,7 +15,7 @@ export default class Notes {
     }
   }
 
-  static readFrom(path: string): Note[] | [] {
+  static readFrom(path: string, withEmptyNote = false): Note[] | [] {
     const notes = readdirSync(path).map(
       (fileName): Note => {
         const filePath = join(path, fileName)
@@ -25,6 +25,8 @@ export default class Notes {
         return this.make(fileName, stats.birthtime.toString(), content)
       },
     )
+
+    if (!withEmptyNote) return notes
 
     return notes.length ? notes : [Notes.make('', new Date().toString())]
   }

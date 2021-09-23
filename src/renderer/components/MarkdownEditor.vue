@@ -25,7 +25,7 @@ export default defineComponent({
     const content = ref('')
     const renderedContent = ref('')
 
-    const { currentNoteContent, data, currentNote } = useNotes()!
+    const { currentNoteContent, data, currentNote, removeNote } = useNotes()!
     const route = useRoute()
     const router = useRouter()
 
@@ -64,10 +64,21 @@ export default defineComponent({
       window.ipc.send('save', Object.assign({}, note))
     })
 
+    window.ipc.on('removeNote', () => {
+      const key = String(route.params.note)
+      const note = currentNote(key)
+      const prevIndex = data.value.findIndex(item => item.key === key)
+      removeNote(key)
+      const previousNote = data.value[prevIndex === 0 ? 0 : prevIndex - 1]
+      window.ipc.send('removedNote', Object.assign({}, note))
+
+      if (previousNote) router.push({ name: 'NoteEditor', params: { note: previousNote.key } })
+      else router.push({ name: 'Home' })
+    })
+
     const editor = ref<HTMLTextAreaElement | null>(null)
     window.ipc.on('newNote', (newNote: Note) => {
       router.push({ name: 'NoteEditor', params: { note: newNote.key } })
-      nextTick(() => editor.value?.focus())
     })
 
     return {
@@ -78,11 +89,6 @@ export default defineComponent({
       focusOnEditor: () => {
         if (presentModeEnabled.value) return
         showRendered.value = false
-        nextTick(() => {
-          if (editor.value === null) return
-
-          editor.value.focus()
-        })
       },
     }
   },

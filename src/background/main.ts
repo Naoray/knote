@@ -2,7 +2,7 @@
 
 import { dialog, ipcMain, protocol } from 'electron'
 import { App } from './app'
-import { writeFile } from 'original-fs'
+import { unlink, writeFile } from 'original-fs'
 import { join, basename } from 'path'
 import Project from './project'
 const isDevelopment = process.env.NODE_ENV !== 'production'
@@ -52,6 +52,14 @@ app.onAppReady(() => {
     event.reply('updated', note)
 
     writeFile(path, note.content, (err) => err && dialog.showErrorBox('Saving unsuccessful', err.stack!))
+  })
+
+  ipcMain.on('removedNote', (event, note) => {
+    // remove note from app.notes
+    app.notes = app.notes.filter((item) => item.key !== note.key)
+
+    // delete file from filesystem
+    unlink(join(app.store.get('projectRoot'), note.fileName), (err) => console.log(err))
   })
 
   ipcMain.on('openProject', (event) => {
