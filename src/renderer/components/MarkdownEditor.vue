@@ -61,10 +61,7 @@ export default defineComponent({
 
     window.ipc.on('save', () => {
       const note = currentNote(String(route.params.note))
-      window.ipc.send('save', {
-        content: note.content,
-        fileName: note.fileName,
-      })
+      window.ipc.send('save', Object.assign({}, note))
     })
 
     const editor = ref<HTMLTextAreaElement | null>(null)

@@ -3,9 +3,8 @@
 import { dialog, ipcMain, protocol } from 'electron'
 import { App } from './app'
 import { writeFile } from 'original-fs'
-import { join } from 'path'
+import { join, basename } from 'path'
 import Project from './project'
-import Notes from './notes'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 // Scheme must be registered before the app is ready
@@ -41,6 +40,16 @@ app.onAppReady(() => {
     if (path === undefined) {
       return
     }
+
+    app.notes = app.notes.map((noteItem) => {
+      if (noteItem.key === note.key) {
+        note.fileName = basename(path)
+      }
+
+      return note
+    })
+
+    event.reply('updated', note)
 
     writeFile(path, note.content, (err) => err && dialog.showErrorBox('Saving unsuccessful', err.stack!))
   })

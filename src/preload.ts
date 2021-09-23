@@ -4,6 +4,7 @@ const validChannels = [
   'request-files',
   'requested-files',
   'save',
+  'updated',
   'openProject',
   'editorChange',
   'appearanceChange',

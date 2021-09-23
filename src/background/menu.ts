@@ -14,7 +14,6 @@ export const serveMenu = (app: App): void => {
           click: () => {
             const newNote = Notes.make('', new Date().toString())
             app.notes.push(newNote)
-            app.send('requested-files', app.notes)
             app.send('newNote', newNote)
           },
         },

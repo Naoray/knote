@@ -7,6 +7,13 @@ const createNotes = (): Notes => {
   const data = ref<Note[]>([])
 
   window.ipc.on('requested-files', (notes: Note[]) => (data.value = notes))
+  window.ipc.on('newNote', (newNote: Note) => data.value.push(newNote))
+  window.ipc.on('updated', (note: Note) => {
+    data.value = data.value.map((item) => {
+      if (item.key === note.key) item = note
+      return item
+    })
+  })
 
   const currentNote = (key: string): Note => data.value.find((item) => String(item.key) === key)!
 
