@@ -14,6 +14,7 @@ const validChannels = [
   'removedNote',
   'togglePresentMode',
   'rendererReady',
+  'settingChange',
 ]
 
 contextBridge.exposeInMainWorld('ipc', {

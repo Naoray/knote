@@ -110,6 +110,17 @@ export const serveMenu = (app: App): void => {
       ],
     }),
     new MenuItem({
+      label: 'Settings',
+      submenu: [
+        {
+          label: 'Enable Autosaving',
+          checked: app.store.get('autosavingEnabled'),
+          type: 'checkbox',
+          click: () => app.send('settingChange', { item: 'enableAutosaving' }),
+        },
+      ],
+    }),
+    new MenuItem({
       label: 'About',
       submenu: [
         {
