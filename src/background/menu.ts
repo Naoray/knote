@@ -116,7 +116,10 @@ export const serveMenu = (app: App): void => {
           label: 'Enable Autosaving',
           checked: app.store.get('autosavingEnabled'),
           type: 'checkbox',
-          click: () => app.send('settingChange', { item: 'enableAutosaving' }),
+          click: (menuItem) => {
+            app.store.set('autosavingEnabled', menuItem.checked)
+            app.send('settingChange', { item: 'enableAutosaving' })
+          },
         },
       ],
     }),
