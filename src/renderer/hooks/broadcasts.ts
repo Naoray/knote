@@ -8,9 +8,14 @@ export interface BroadcastAppearanceObject {
   value: boolean
 }
 
+export interface BroadcastSettingObject {
+  item: 'enableAutosaving'
+}
+
 export interface Broadcasts {
   editor: UnwrapRef<{ showRenderedMarkdown: boolean }>
   appearance: UnwrapRef<{ showSidebar: boolean }>
+  settings: UnwrapRef<{ enableAutosaving: boolean }>
 }
 
 const broadcastSymbol = Symbol('broadcast')
@@ -32,9 +37,18 @@ const createBroadcasts = (): Broadcasts => {
     appearance[item] = value as boolean
   })
 
+  const settings = reactive({
+    enableAutosaving: false,
+  })
+
+  window.ipc.on('settingChange', ({ item }: BroadcastSettingObject) => {
+    settings[item] = !settings[item]
+  })
+
   return {
     editor,
     appearance,
+    settings,
   }
 }
 

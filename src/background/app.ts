@@ -7,6 +7,9 @@ import { Note } from '@/shared/types'
 import { createWindowManager, Window } from './window'
 import AppUpdater from './updater'
 import Project from './project'
+import { IpcMainEvent } from 'electron/main'
+import { basename } from 'path'
+import { createMarkdown, Markdown } from '@/shared/markdown'
 interface fn {
   (): void
 }
@@ -17,6 +20,8 @@ export class App {
   isDevelopment: boolean
   store: ElectronStore<Schema>
   windowManager?: Window
+
+  markdown: Markdown
 
   rendererReady = false
   windowReady = false
@@ -29,6 +34,13 @@ export class App {
     this.store = createStore()
     this.electron = app
     this.updater = new AppUpdater()
+
+    this.markdown = createMarkdown('default', {
+      html: true,
+      linkify: true,
+      breaks: true,
+      typographer: true,
+    })
   }
 
   send(channel: string, ...args: any[]): void {
@@ -40,6 +52,18 @@ export class App {
     if (!this.windowReady || !this.rendererReady || !this.store.has('projectRoot')) return
 
     Project.load(this)
+  }
+
+  updateNotes(note: Note, path: string, event: IpcMainEvent) {
+    this.notes = this.notes.map((noteItem) => {
+      if (noteItem.key === note.key) {
+        note.fileName = basename(path)
+      }
+
+      return note
+    })
+
+    event.reply('updated', note)
   }
 
   onAppReady(callback: fn): void {

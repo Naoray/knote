@@ -1,6 +1,6 @@
 import MarkdownIt, { Options, PresetName } from 'markdown-it'
 
-class Markdown {
+export class Markdown {
   private markdownIt: MarkdownIt
 
   constructor(preset: PresetName = 'default', options?: Options) {

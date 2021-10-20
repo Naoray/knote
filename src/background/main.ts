@@ -3,8 +3,9 @@
 import { dialog, ipcMain, protocol } from 'electron'
 import { App } from './app'
 import { unlink, writeFile } from 'original-fs'
-import { join, basename } from 'path'
+import { join } from 'path'
 import Project from './project'
+import { snakeCase } from '@/shared/utils'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 // Scheme must be registered before the app is ready
@@ -29,11 +30,12 @@ app.onAppReady(() => {
 
     if (note.fileName !== '') {
       const path = join(app.store.get('projectRoot'), note.fileName)
+      app.updateNotes(note, path, event)
       return writeFile(path, note.content, (err) => err && dialog.showErrorBox('Saving unsuccessful', err.stack!))
     }
 
     const path = dialog.showSaveDialogSync(app.windowManager.window, {
-      defaultPath: app.store.get('projectRoot'),
+      defaultPath: join(app.store.get('projectRoot'), snakeCase(app.markdown.extractTitle(note.content)) + '.md'),
       filters: [{ name: 'Markdown Files', extensions: ['md'] }],
     })
 
@@ -41,16 +43,7 @@ app.onAppReady(() => {
       return
     }
 
-    app.notes = app.notes.map((noteItem) => {
-      if (noteItem.key === note.key) {
-        note.fileName = basename(path)
-      }
-
-      return note
-    })
-
-    event.reply('updated', note)
-
+    app.updateNotes(note, path, event)
     writeFile(path, note.content, (err) => err && dialog.showErrorBox('Saving unsuccessful', err.stack!))
   })
 

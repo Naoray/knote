@@ -6,17 +6,18 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, nextTick, ref, watch } from 'vue'
+import { defineComponent, ref, watch } from 'vue'
 
 import { useNotes } from '../hooks/notes'
-import { useRoute, useRouter } from 'vue-router'
+import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
 import { useBroadcasts } from '../hooks/broadcasts'
 import { useMarkdown } from '../hooks/markdown'
 import { Note } from '@/shared/types'
+import { debounce } from '@/shared/utils'
 
 export default defineComponent({
   setup () {
-    const { editor: editorBroadcast } = useBroadcasts()!
+    const { editor: editorBroadcast, settings } = useBroadcasts()!
     const { toHtml } = useMarkdown()!
 
     const showRendered = ref(true)
@@ -34,6 +35,17 @@ export default defineComponent({
       renderedContent.value = toHtml(content.value)
     }
 
+    const saveCurrentNote = () => {
+      const note = currentNote(String(route.params.note))
+      return window.ipc.send('save', Object.assign({}, note))
+    }
+
+    onBeforeRouteLeave((to, from, next) => {
+      if (settings.enableAutosaving) saveCurrentNote()
+
+      next()
+    })
+
     // set first file content on initial load
     getCurrentNoteContent()
 
@@ -46,12 +58,16 @@ export default defineComponent({
       showRendered.value = true
     })
 
-    watch(content, current => {
+    watch(content, debounce(current => {
       const note = currentNote(String(route.params.note))
       if (note === undefined) return
       note.content = current
-      renderedContent.value = toHtml(current)
-    })
+      const htmlContent = toHtml(current)
+      const contentHasChanged = htmlContent !== renderedContent.value
+      renderedContent.value = htmlContent
+
+      if (note.fileName && contentHasChanged && settings.enableAutosaving) saveCurrentNote()
+    }))
 
     const presentModeEnabled = ref(false)
     window.ipc.on('togglePresentMode', (enabled: boolean) => {
@@ -59,10 +75,7 @@ export default defineComponent({
       if (enabled) showRendered.value = true
     })
 
-    window.ipc.on('save', () => {
-      const note = currentNote(String(route.params.note))
-      window.ipc.send('save', Object.assign({}, note))
-    })
+    window.ipc.on('save', saveCurrentNote)
 
     window.ipc.on('removeNote', () => {
       const key = String(route.params.note)
