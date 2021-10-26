@@ -10,6 +10,7 @@ export interface BroadcastAppearanceObject {
 
 export interface BroadcastSettingObject {
   item: 'enableAutosaving'
+  value: boolean
 }
 
 export interface Broadcasts {
@@ -41,8 +42,8 @@ const createBroadcasts = (): Broadcasts => {
     enableAutosaving: false,
   })
 
-  window.ipc.on('settingChange', ({ item }: BroadcastSettingObject) => {
-    settings[item] = !settings[item]
+  window.ipc.on('settingChange', ({ item, value }: BroadcastSettingObject) => {
+    settings[item] = value
   })
 
   return {
